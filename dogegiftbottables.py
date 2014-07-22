@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 import sqlalchemy as sql
 import calendar
 import datetime
-def Timestamp(self,_datetime): 
+def Timestamp(_datetime): 
         
     return calendar.timegm(_datetime.timetuple())
 

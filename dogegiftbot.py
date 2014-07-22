@@ -13,7 +13,7 @@ r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 ###### config section ############
 bot_name = "multisigtest1"
 #authorized admins
-authorized = ['PieMan2201','bigdred777','TheLobstrosity']
+authorized = ['Doomhammer458']
 #login info
 r.login()                  #leave blank for praw config
 reentry_contact = ["Doomhammer458"]
@@ -312,7 +312,7 @@ def get_winner(msg, entries):
  --/u/dogegiftbot Team  
  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Coded ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http:\\www.bots4doge.com)   
+ ^Coded ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http://www.bots4doge.com)   
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w""" % (winner, 
 									'http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Bentry',
 									'http://www.reddit.com/message/compose?to=dogegiftbot&subject=exit&message=%2Boptout',
@@ -332,9 +332,9 @@ def get_winner(msg, entries):
 					forward = str(msg.body.lower())[:-12]
 					forward_t = str(forward)[7:]
 					for x in authorized:
-						r.send_message(x,'Gift Card','%s chose the %s gift card' % (msg.author.name, forward_t))
+						r.send_message(x,'Gift Card','%s choose the %s gift card' % (msg.author.name, forward_t))
 					choice = 'boo'
-					msg.reply('''You chose the %s giftcard. If you would like to be re-entered into the giveaway, please create a submission that contains a link to a picture of your giftcard.  
+					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please create a submission that contains a link to a picture of your giftcard.  
  Then, create a comment on that submission that contains the text `enter again dogegiftbot`.  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
 					address = getaddress(msg.author.name,forward_t)
