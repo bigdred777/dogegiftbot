@@ -8,19 +8,26 @@ import json
 import StringIO
 
 from dogegiftbottables import *
+r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 
-
-
-
+###### config section ############
+bot_name = "multisigtest1"
+#authorized admins
+authorized = ['PieMan2201','bigdred777','TheLobstrosity']
+#login info
+r.login()                  #leave blank for praw config
+reentry_contact = ["Doomhammer458"]
+subreddit_to_post = "dogetrivia"
+###### config section ############
 
 
 # Created by /u/PieMan2201 through bots4doge.com
     
 
 
-r = praw.Reddit(user_agent='dogegiftbot version 0.1')
+
 winner_count = 0
-r.login()
+
 print 'LOGIN SUCCESS'
 kill_var = '321'
 winners = []
@@ -40,7 +47,7 @@ donors = []
 donations = []
 donor_dict = {}
 lower_body = 'bnipdsn'
-authorized = ['PieMan2201','bigdred777','TheLobstrosity']
+
 
 already_won = get_winners()
 winning_message = '''You have won a dogegiftbot giveaway!   
@@ -74,7 +81,7 @@ def getDonors(text):
 	                
 		      if  counter < 10:
 		    
-		         	if line.split()[2] == '**/u/multisigtest1**':
+		         	if line.split()[2] == '**/u/'+bot_name+'**':
 		         	        
 
 		         	        donors.append(line.split()[1] )
@@ -292,7 +299,7 @@ def get_winner(msg, entries):
 								print 'NOT VERIFIED'
 				time.sleep(5)
 			print winner + ' won!'
-		winning_postid = r.submit('dogebottest','[Winner] DogeGiftBot Winner!',text="""The winner is...   
+		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text="""The winner is...   
  **/u/%s**! Congratulations!  
  They have been picked as the winner of this round, and have the option of selecting a $25 gift-card purchased with Dogecoin!  
  A PM has been sent to the winner with more details.  
@@ -413,7 +420,7 @@ def check_posts():
 					print 'Comment ID: ' + comment.id
 					print 'Processing RE-ENTRY post'
 					link = 'http://redd.it/' + x.id
-					r.send_message('PieMan2201','Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
+					r.send_message(reentry_contact,'Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
 					add_post(comment.id)
 					print 'Post processed'
 
@@ -422,9 +429,11 @@ def check_posts():
 #bot loop
 
 while True: 
+        already_won = get_winners()
 	entries = get_entries()
-	print entries
 	done = get_posts()
+	print "entries"
+	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
 	if repcount < 120:
 		if balcheck == 12:
