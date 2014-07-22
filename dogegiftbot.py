@@ -5,14 +5,77 @@ import sys
 import urllib
 import urllib2
 import json
-import pprint
 import StringIO
+import sqlalchemy as sql
 
+
+from sqlalchemy import Column, String,Float, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+
+Base = declarative_base()
 # Created by /u/PieMan2201 through bots4doge.com
+class Entries(Base):
+    __tablename__ = "entries"
+    user = Column(String, primary_key = True)
+    times_won = Column(Float)
+    entry_date = Column(String)
+class Contest(Base):
+    __tablename__ = "contest"
+    date = Column(String, primary_key = True)
+    winner = Column(String)
+    prize = Column(String)
+class Posts(Base):
+    post_id = Column(String, primary_key = True)
+    __tablename__ = "posts"
+class Donors(Base):
+    __tablename__="donors"
+    donation_date = Column(String, primary_key = True)
+    user = Column(String)
+    value = Column(Float)
+class Doge_balance(Base):
+    __tablename__="balance"
+    balance = Column(Float,primary_key=True)
+    
 
-r = praw.Reddit(user_agent='I love pizza!')
+def create_session():
+    """
+    Creates and returns a sqlite session
+    """
+    import sqlalchemy as sql
+    from sqlalchemy.orm import sessionmaker
+    engine = sql.create_engine("sqlite:///dogegiftbot.db")
+    Session = sessionmaker(bind=engine)
+    session =Session()
+    return session
+def get_entries():
+
+    session = create_session()
+    all_entries = session.query(Entries).all()
+    session.close()
+    entries = []
+    for item in all_entries:
+        entries.append(item.user)
+    return entries
+
+    
+    
+    """
+if __name__ == "__main__":
+
+    
+    engine = sql.create_engine("sqlite:///dogegiftbot.db")
+    Base.metadata.create_all(engine) 
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    session.commit()
+
+"""
+r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 winner_count = 0
-r.login('dogegiftbot','')
+r.login()
 print 'LOGIN SUCCESS'
 kill_var = '321'
 winners = []
@@ -22,10 +85,10 @@ balance = 0
 for msg in r.get_unread(limit=None):
 	msg.mark_as_read()
 entries = []
-r.send_message('dogetipbot','hist','+history')
+#r.send_message('dogetipbot','hist','+history')
 repcount = 0
 balcheck = 12
-postcheck = 6
+postcheck = 0
 first_run = 1
 done = []
 lower_body = 'bnipdsn'
@@ -45,7 +108,7 @@ for line in file:
 	name = line.split()[0]
 	entries.append(name)
 file.close()
-file2 = open('wonners.txt')
+file2 = open('winners.txt')
 for line in file2:
 	name = line.split()[0]
 	already_won.append(name)
@@ -345,7 +408,7 @@ def get_dtbinfo():
 	global first_run
 	print "Checking balance"
 	r.send_message('dogetipbot','moot','+history')
-#	print 'sent message'
+	print 'sent message'
 	if first_run == 0:
 		balance_old = balance
 		text_old = text
@@ -375,7 +438,7 @@ def get_dtbinfo():
 		time.sleep(20)
 	global donor_dict
 	global text
-	donor_dict = getDonors(text)
+	#donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
 	submissions = r.get_subreddit('dogecoin').get_new(limit=25)
@@ -393,45 +456,44 @@ def check_posts():
 					r.send_message('PieMan2201','Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
 					done.append(comment.id)
 					print 'Post processed'
+
+
+
+#bot loop
+
 while True: 
-	try: 
-		print 'A giftcard costs ' + str(getcost()) + ' doge' 
-		if repcount < 120:
-			if balcheck == 12:
-				get_dtbinfo()
-				balcheck = 0
-			if postcheck == 6:
-				check_posts()
-				postcheck = 0
-			if msgcheck == 0:
-				check_commands()
-				savelists(entries, already_won, done)
-				msgcheck = 0
-			balcheck += 1
-			repcount += 1
-			postcheck += 1
-			print 'bal: ' + str(balcheck)
-			print 'rep: ' + str(repcount)
-			print 'pos: ' + str(postcheck)
-			time.sleep(30)
-		elif repcount >= 120:
-			giftcost = getcost()
-#			giftcost = 10
-			print "The cost of a giftcard is %s DOGE" % giftcost
-			print "the current balance is %s DOGE" % balance
-			if float(giftcost) <= float(balance):
-				get_winner('moot',entries)
-				repcount = 0
-			elif float(giftcost) > float(balance):
-				print "Balance too low"
-				repcount = 0
-	except KeyboardInterrupt:
-		savelists(entries, already_won, done)
-		sys.exit()
-	except:
-		print sys.exc_info()
-		print 'Please send the above information to the author of this program'
-		savelists(entries, already_won, done)
-		if kill_var == '9001':
-			sys.exit()
-		continue 
+	 
+	print 'A giftcard costs ' + str(getcost()) + ' doge' 
+	if repcount < 120:
+		if balcheck == 12:
+			get_dtbinfo()
+			balcheck = 0
+		print "1"
+		if postcheck == 6:
+			check_posts()
+			postcheck = 0
+		print "2"
+		if msgcheck == 0:
+			check_commands()
+			savelists(entries, already_won, done)
+			msgcheck = 0
+		print "3"
+		balcheck += 1
+		repcount += 1
+		postcheck += 1
+		print 'bal: ' + str(balcheck)
+		print 'rep: ' + str(repcount)
+		print 'pos: ' + str(postcheck)
+		time.sleep(30)
+	elif repcount >= 120:
+		giftcost = getcost()
+#		giftcost = 10
+		print "The cost of a giftcard is %s DOGE" % giftcost
+		print "the current balance is %s DOGE" % balance
+		if float(giftcost) <= float(balance):
+			get_winner('moot',entries)
+			repcount = 0
+		elif float(giftcost) > float(balance):
+			print "Balance too low"
+			repcount = 0
+
