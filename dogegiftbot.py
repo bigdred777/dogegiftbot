@@ -21,6 +21,9 @@ class Entries(Base):
     user = Column(String, primary_key = True)
     times_won = Column(Float)
     entry_date = Column(String)
+    entered = Column(Boolean)
+    def __repr__(self):
+        return "<entries instance %s>" % (self.user)
 class Contest(Base):
     __tablename__ = "contest"
     date = Column(String, primary_key = True)
@@ -48,20 +51,41 @@ def create_session():
     engine = sql.create_engine("sqlite:///dogegiftbot.db")
     Session = sessionmaker(bind=engine)
     session =Session()
+    
     return session
 def get_entries():
 
     session = create_session()
     all_entries = session.query(Entries).all()
     session.close()
+    print all_entries
+    if all_entries == None:
+        return []
     entries = []
     for item in all_entries:
         entries.append(item.user)
     return entries
 
+def add_entry(User):
+    db_add = Entries(user = User, entered = True)
+    session = create_session()
+    session.add(db_add)
+    session.commit()
+    print "added" + User
+    return 1
+def remove_entry(User):
+    session = create_session()
+    
+    search = session.query(Entries).filter(Entries.user==User).first()
+    if search == None:
+        search = Entries(user = User, entered = False)
+    else:
+        search.entered = False
+    session.add(search)
+    session.commit()
+        
     
     
-    """
 if __name__ == "__main__":
 
     
@@ -72,7 +96,7 @@ if __name__ == "__main__":
     session = Session()
     session.commit()
 
-"""
+
 r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 winner_count = 0
 r.login()
@@ -84,7 +108,7 @@ global balance
 balance = 0
 for msg in r.get_unread(limit=None):
 	msg.mark_as_read()
-entries = []
+entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
 repcount = 0
 balcheck = 12
@@ -103,11 +127,7 @@ You have 72 hours (3 days) to reply to this message. If you have not replied by 
 %s
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w    
 THIS IS A TEST. PLEASE FOLLOW THE INSTRUCTIONS EVEN THOUGH YOU WILL NOT BE REWARDED.'''
-file = open('entries.txt')
-for line in file:
-	name = line.split()[0]
-	entries.append(name)
-file.close()
+
 file2 = open('winners.txt')
 for line in file2:
 	name = line.split()[0]
@@ -122,18 +142,27 @@ print entries
 print already_won
 print done
 def getDonors(text):
-	text2 = text.replace('|',' ')
+	text2 = text.replace('|',' ').encode("ascii","ignore")
 	dict = {}
 	text3 = StringIO.StringIO(text2)
 	counter = 0
+	
 	for line in text3:
-		if line.split() != [] and counter < 10:
-			if line.split()[2] != '**/u/dogegiftbot**' and '/u/' in line.split()[2] and '+' not in line.split()[2] and line.split()[1] != 'failed':
-				if line.split()[2] not in dict.keys():
-					dict[line.split()[2]] = float(line.split()[6])
-					counter += 1
-				elif line.split()[2] in dict.keys():
-					dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+	        
+	        if "**/u/multisigtest1**" in line:
+	            split = line.split()
+	            if split[0] == "tip":
+	                
+	              print split
+		      if  counter < 10:
+		    
+		         	if line.split()[2] != '**/u/multisigtest1**' and '/u/' in line.split()[2] and '+' not in line.split()[2] and line.split()[1] != 'failed':
+		        		if line.split()[2] not in dict.keys():
+		           			dict[line.split()[2]] = float(line.split()[6])
+		           			counter += 1
+		        		elif line.split()[2] in dict.keys():
+		           			dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+	   
 	return dict	
 def getaddress(winner,card):
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
@@ -198,7 +227,7 @@ def check_commands():
 			comkarm = user.comment_karma
 			if int(comkarm) > 49:
 				if auth not in entries and auth not in already_won:
-					entries.append(auth)
+					add_entry(auth)
 					msg.reply('''You have been entered into the giveaway!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 					print auth + ' has entered'
@@ -208,7 +237,8 @@ def check_commands():
 			else:
 				print auth + ' does not meet requirements'
 				msg.reply("I'm sorry, but you do not have sufficient comment karma to register. You need at least 50 comment karma to enter.")
-			print entries
+
+			
 			print 'Request processed'
 		elif '+optout' == body and auth in entries:
 			print 'Processing OPT-OUT request'
@@ -216,7 +246,7 @@ def check_commands():
 			entries.remove(auth)
 			msg.reply('''You have been removed from the giveaway.  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
-			print entries
+			
 			print 'Request processed'
 		elif '+history' == body:
 			print "Processing HISTORY request"
@@ -291,13 +321,13 @@ def check_commands():
 			print "Processing RE-ENTRY request"
 			reentree = msg.body[8:-12]
 			print reentree + " will be re-entered"
-			entries.append(reentree)
+			add_entry(reentree)
 			already_won.remove(reentree)
 			msg.reply(reentree + ' has been re-entered into the drawing.')
 			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			msg.mark_as_read()
-			print entries
+			
 			print 'Request processed'
 def get_winner(msg, entries):
 	choose_winner = 0
@@ -438,7 +468,7 @@ def get_dtbinfo():
 		time.sleep(20)
 	global donor_dict
 	global text
-	#donor_dict = getDonors(text)
+	donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
 	submissions = r.get_subreddit('dogecoin').get_new(limit=25)
@@ -462,7 +492,8 @@ def check_posts():
 #bot loop
 
 while True: 
-	 
+	entries = get_entries()
+	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
 	if repcount < 120:
 		if balcheck == 12:
