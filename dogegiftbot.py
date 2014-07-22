@@ -6,95 +6,16 @@ import urllib
 import urllib2
 import json
 import StringIO
-import sqlalchemy as sql
+
+from dogegiftbottables import *
 
 
-from sqlalchemy import Column, String,Float, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 
-Base = declarative_base()
+
+
 # Created by /u/PieMan2201 through bots4doge.com
-class Entries(Base):
-    __tablename__ = "entries"
-    user = Column(String, primary_key = True)
-    times_won = Column(Float)
-    entry_date = Column(String)
-    entered = Column(Boolean)
-    def __repr__(self):
-        return "<entries instance %s>" % (self.user)
-class Contest(Base):
-    __tablename__ = "contest"
-    date = Column(String, primary_key = True)
-    winner = Column(String)
-    prize = Column(String)
-class Posts(Base):
-    post_id = Column(String, primary_key = True)
-    __tablename__ = "posts"
-class Donors(Base):
-    __tablename__="donors"
-    donation_date = Column(String, primary_key = True)
-    user = Column(String)
-    value = Column(Float)
-class Doge_balance(Base):
-    __tablename__="balance"
-    balance = Column(Float,primary_key=True)
     
-
-def create_session():
-    """
-    Creates and returns a sqlite session
-    """
-    import sqlalchemy as sql
-    from sqlalchemy.orm import sessionmaker
-    engine = sql.create_engine("sqlite:///dogegiftbot.db")
-    Session = sessionmaker(bind=engine)
-    session =Session()
-    
-    return session
-def get_entries():
-
-    session = create_session()
-    all_entries = session.query(Entries).all()
-    session.close()
-    print all_entries
-    if all_entries == None:
-        return []
-    entries = []
-    for item in all_entries:
-        entries.append(item.user)
-    return entries
-
-def add_entry(User):
-    db_add = Entries(user = User, entered = True)
-    session = create_session()
-    session.add(db_add)
-    session.commit()
-    print "added" + User
-    return 1
-def remove_entry(User):
-    session = create_session()
-    
-    search = session.query(Entries).filter(Entries.user==User).first()
-    if search == None:
-        search = Entries(user = User, entered = False)
-    else:
-        search.entered = False
-    session.add(search)
-    session.commit()
-        
-    
-    
-if __name__ == "__main__":
-
-    
-    engine = sql.create_engine("sqlite:///dogegiftbot.db")
-    Base.metadata.create_all(engine) 
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    session.commit()
 
 
 r = praw.Reddit(user_agent='dogegiftbot version 0.1')
@@ -104,7 +25,7 @@ print 'LOGIN SUCCESS'
 kill_var = '321'
 winners = []
 msgcheck = 0
-global balance
+
 balance = 0
 for msg in r.get_unread(limit=None):
 	msg.mark_as_read()
@@ -114,11 +35,14 @@ repcount = 0
 balcheck = 12
 postcheck = 0
 first_run = 1
-done = []
+done = get_posts()
+donors = []
+donations = []
+donor_dict = {}
 lower_body = 'bnipdsn'
 authorized = ['PieMan2201','bigdred777','TheLobstrosity']
-global authorized
-already_won = []
+
+already_won = get_winners()
 winning_message = '''You have won a dogegiftbot giveaway!   
 Reply with "accept [name of gift-card] dogegiftbot" to claim a gift-card from [egifter.com](https://www.egifter.com/giftcards)  
 If you would like to pass the gift, reply with "pass random dogegiftbot" to pass it to a random person.  
@@ -128,42 +52,40 @@ You have 72 hours (3 days) to reply to this message. If you have not replied by 
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w    
 THIS IS A TEST. PLEASE FOLLOW THE INSTRUCTIONS EVEN THOUGH YOU WILL NOT BE REWARDED.'''
 
-file2 = open('winners.txt')
-for line in file2:
-	name = line.split()[0]
-	already_won.append(name)
-file2.close()
-file3 = open('postids.txt')
-for line in file3:
-	name = line.split()[0]
-	done.append(name)
-file3.close()
+
 print entries
 print already_won
 print done
 def getDonors(text):
+        
 	text2 = text.replace('|',' ').encode("ascii","ignore")
 	dict = {}
 	text3 = StringIO.StringIO(text2)
 	counter = 0
-	
+	global donors
+        global donations
+	donors=[]
+        donations =[]
 	for line in text3:
 	        
 	        if "**/u/multisigtest1**" in line:
 	            split = line.split()
 	            if split[0] == "tip":
 	                
-	              print split
 		      if  counter < 10:
 		    
-		         	if line.split()[2] != '**/u/multisigtest1**' and '/u/' in line.split()[2] and '+' not in line.split()[2] and line.split()[1] != 'failed':
-		        		if line.split()[2] not in dict.keys():
-		           			dict[line.split()[2]] = float(line.split()[6])
-		           			counter += 1
+		         	if line.split()[2] == '**/u/multisigtest1**':
+		         	        
+
+		         	        donors.append(line.split()[1] )
+		         	        donations.append(float(line.split()[5]))
+		        		if line.split()[1] not in dict.keys():
+		           			dict[line.split()[1]] = float(line.split()[5])
+		           		        counter += 1
 		        		elif line.split()[2] in dict.keys():
-		           			dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
-	   
-	return dict	
+		           			dict[line.split()[1]] = dict[line.split()[1]] + float(line.split()[5])
+	                                
+        return dict	
 def getaddress(winner,card):
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
@@ -217,6 +139,7 @@ def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
 	for msg in msgs:
+	        entries = get_entries()
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
@@ -250,13 +173,18 @@ def check_commands():
 			print 'Request processed'
 		elif '+history' == body:
 			print "Processing HISTORY request"
-			msg.mark_as_read()
+			
 			giftcost = getcost()
-			donors = []
-			donations = []
-			for x in donor_dict.keys():
-				donors.append(x)
-				donations.append(donor_dict[x])
+			global donors
+			global donations
+                        if len(donor_dict.keys()) > 10:
+                                donors = []
+     			        donations = []
+     			        for x in donor_dict.keys():
+        				donors.append(x)
+        				donations.append(donor_dict[x])
+			print donors 
+			print donations
 			msg.reply('''My balance is %s DOGE  
  My goal is %s DOGE  
  I need %s DOGE to reach my goal.  
@@ -298,6 +226,7 @@ def check_commands():
 																													donors[9],
 																													donations[9]))
 			print 'Request processed'
+			msg.mark_as_read()
 		elif 'exit dogegiftbot' == body and auth in authorized:
 			print "Processing KILL request"
 			msg.reply('Bot is shutting down')
@@ -322,7 +251,7 @@ def check_commands():
 			reentree = msg.body[8:-12]
 			print reentree + " will be re-entered"
 			add_entry(reentree)
-			already_won.remove(reentree)
+			remove_winner(reentree)
 			msg.reply(reentree + ' has been re-entered into the drawing.')
 			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
@@ -406,8 +335,8 @@ def get_winner(msg, entries):
 					r.send_message('dogetipbot',forward_t + 'for' + msg.author.name, '+withdraw %s %s doge' % (address, str(cost)))
 					print address
 					if msg.author.name in entries:
-						entries.remove(msg.author.name)
-					already_won.append(msg.author.name)
+						remove_entry(msg.author.name)
+					add_winner(msg.author.name)
 					print winner + ' has claimed the ' + forward_t + ' gift card'
 					exit_var = 'exit'
 				elif 'pass random dogegiftbot' == msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
@@ -436,6 +365,7 @@ def get_winner(msg, entries):
 			time.sleep(30)
 def get_dtbinfo():
 	global first_run
+	global balance
 	print "Checking balance"
 	r.send_message('dogetipbot','moot','+history')
 	print 'sent message'
@@ -447,7 +377,7 @@ def get_dtbinfo():
 		text_old = '/u/PieMan2201'
 	first_run = 0
 	balance = 0
-	text = 0
+	text = None
 	balance_counter = 0
 	while balance == 0 and balance_counter < 18:
 		msgs = r.get_unread()
@@ -455,7 +385,7 @@ def get_dtbinfo():
 		for x in msgs:
 #			print 'moot2'
 			if x.author.name == 'dogetipbot' and 'here are your last' in x.body.lower():
-				global balance
+				
 				balance = x.body.split()[13][2:]
 				print balance + ' DOGE'
 				x.mark_as_read()
@@ -467,7 +397,7 @@ def get_dtbinfo():
 			text = text_old
 		time.sleep(20)
 	global donor_dict
-	global text
+	
 	donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
@@ -484,7 +414,7 @@ def check_posts():
 					print 'Processing RE-ENTRY post'
 					link = 'http://redd.it/' + x.id
 					r.send_message('PieMan2201','Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
-					done.append(comment.id)
+					add_post(comment.id)
 					print 'Post processed'
 
 
@@ -494,6 +424,7 @@ def check_posts():
 while True: 
 	entries = get_entries()
 	print entries
+	done = get_posts()
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
 	if repcount < 120:
 		if balcheck == 12:
