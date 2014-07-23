@@ -91,12 +91,15 @@ def remove_entry(User):
     session = create_session()
     
     search = session.query(Entries).filter(Entries.user==User).first()
+    print "remove ",
+    print search 
     if search == None:
-        search = Entries(user = User, entered = False)
+        return 0
     else:
         search.entered = False
-    session.add(search)
-    session.commit()
+        session.delete(search)
+        session.commit()
+    return 1
         
 def get_posts():
 
@@ -139,6 +142,7 @@ def remove_winner(Winner):
     session = create_session()
     
     db_remove = session.query(Contests.winner == Winner).first()
+    
     session.delete(db_remove)
     session.commit()
      

@@ -11,7 +11,7 @@ from dogegiftbottables import *
 r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 
 ###### config section ############
-bot_name = "multisigtest1"
+bot_name = "Doomhammer458"
 #authorized admins
 authorized = ['Doomhammer458']
 #login info
@@ -25,7 +25,7 @@ subreddit_to_post = "dogetrivia"
     
 
 
-
+bot_name = bot_name.lower()
 winner_count = 0
 
 print 'LOGIN SUCCESS'
@@ -65,33 +65,33 @@ print already_won
 print done
 def getDonors(text):
         
-	text2 = text.replace('|',' ').encode("ascii","ignore")
+	text2 = text.replace('|',' ').encode("ascii","replace")
 	dict = {}
 	text3 = StringIO.StringIO(text2)
 	counter = 0
-	global donors
-        global donations
-	donors=[]
-        donations =[]
+
 	for line in text3:
 	        
-	        if "**/u/multisigtest1**" in line:
-	            split = line.split()
-	            if split[0] == "tip":
+	        if "**/u/"+bot_name+"**" in line:
+	           
+	            
+	            if line.split()[0] == "tip":
+	                  
 	                
-		      if  counter < 10:
+		          if  counter < 10:
 		    
-		         	if line.split()[2] == '**/u/'+bot_name+'**':
+		         	if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?":
 		         	        
 
-		         	        donors.append(line.split()[1] )
-		         	        donations.append(float(line.split()[5]))
-		        		if line.split()[1] not in dict.keys():
-		           			dict[line.split()[1]] = float(line.split()[5])
+		         	        
+		        		if line.split()[2] not in dict.keys():
+		        		        
+		           			dict[line.split()[2]] = float(line.split()[6])
 		           		        counter += 1
 		        		elif line.split()[2] in dict.keys():
-		           			dict[line.split()[1]] = dict[line.split()[1]] + float(line.split()[5])
-	                                
+                                            dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+	print "donors "	   
+	print dict                              
         return dict	
 def getaddress(winner,card):
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
@@ -173,7 +173,7 @@ def check_commands():
 		elif '+optout' == body and auth in entries:
 			print 'Processing OPT-OUT request'
 			msg.mark_as_read()
-			entries.remove(auth)
+			remove_entry(auth)
 			msg.reply('''You have been removed from the giveaway.  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			
@@ -182,14 +182,12 @@ def check_commands():
 			print "Processing HISTORY request"
 			
 			giftcost = getcost()
-			global donors
-			global donations
-                        if len(donor_dict.keys()) ==10:
-                                donors = []
-     			        donations = []
-     			        for x in donor_dict.keys():
-        				donors.append(x)
-        				donations.append(donor_dict[x])
+
+                        donors = []
+                        donations = []
+     			for x in donor_dict.keys():
+        			donors.append(x)
+        			donations.append(donor_dict[x])
 			print donors 
 			print donations
 			msg.reply('''My balance is %s DOGE  
@@ -394,14 +392,17 @@ def get_dtbinfo():
 			if x.author.name == 'dogetipbot' and 'here are your last' in x.body.lower():
 				
 				balance = x.body.split()[13][2:]
-				print balance + ' DOGE'
+				print "balance: "+balance + ' DOGE'
 				x.mark_as_read()
 				text = x.body.lower()
+				
 		balance_counter += 1
 		if balance_counter == 18:
 			print 'Time limit exceeded, balance update FAILED'
 			balance = balance_old
 			text = text_old
+		if balance > 0:
+		    break
 		time.sleep(20)
 	global donor_dict
 	
@@ -472,11 +473,12 @@ while True:
  	savelists(entries, already_won, done)
  	sys.exit()
     except:
- 	
- 	print traceback.print_exc() 
- 	print 'Please send the above information to the author of this program'
+
  	time.sleep(20)
  	savelists(entries, already_won, done)
  	if kill_var == '9001':
  		sys.exit()
+ 	print "exception traceback"
+ 	traceback.print_exc() 
+ 	print 'Please send the above information to the author of this program'
  	continue 
