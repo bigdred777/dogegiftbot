@@ -2,11 +2,11 @@
 
 from sqlalchemy import Column, String,Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy as sql
 import calendar
 import datetime
+import uuid
 def Timestamp(_datetime): 
         
     return calendar.timegm(_datetime.timetuple())
@@ -41,6 +41,14 @@ class Contests(Base):
 class Posts(Base):
     post_id = Column(String, primary_key = True)
     __tablename__ = "posts"
+class Transactions(Base):
+    __tablename__ = "transactions"
+    tx_id = Column(String, primary_key = True)
+    tx_type = Column(String)
+    amount = Column(Float)
+    donor = Column(String)
+    date = Column(String)
+    address = Column(String)
 
 def create_session():
     """
@@ -146,6 +154,8 @@ if __name__ == "__main__":
     session = Session()
     session.commit()
     with open("entries.txt") as  read_file:
-        line = read_file.readline().strip()
-        add_entry(line)
+        for line in read_file:
+            if line.strip == "":
+                break
+            add_entry(line.strip())
         

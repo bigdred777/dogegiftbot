@@ -6,7 +6,7 @@ import urllib
 import urllib2
 import json
 import StringIO
-
+import traceback
 from dogegiftbottables import *
 r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 
@@ -430,6 +430,7 @@ def check_posts():
 
 while True: 
     try:
+        
         already_won = get_winners()
 	entries = get_entries()
 	done = get_posts()
@@ -440,7 +441,6 @@ while True:
 		if balcheck == 12:
 			get_dtbinfo()
 			balcheck = 0
-		j
 		if postcheck == 6:
 			check_posts()
 			postcheck = 0
@@ -472,8 +472,10 @@ while True:
  	savelists(entries, already_won, done)
  	sys.exit()
     except:
- 	print sys.exc_info()
+ 	
+ 	print traceback.print_exc() 
  	print 'Please send the above information to the author of this program'
+ 	time.sleep(20)
  	savelists(entries, already_won, done)
  	if kill_var == '9001':
  		sys.exit()
