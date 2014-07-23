@@ -429,6 +429,7 @@ def check_posts():
 #bot loop
 
 while True: 
+    try:
         already_won = get_winners()
 	entries = get_entries()
 	done = get_posts()
@@ -467,4 +468,13 @@ while True:
 		elif float(giftcost) > float(balance):
 			print "Balance too low"
 			repcount = 0
-
+    except KeyboardInterrupt:
+ 	savelists(entries, already_won, done)
+ 	sys.exit()
+    except:
+ 	print sys.exc_info()
+ 	print 'Please send the above information to the author of this program'
+ 	savelists(entries, already_won, done)
+ 	if kill_var == '9001':
+ 		sys.exit()
+ 	continue 
