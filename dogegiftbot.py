@@ -184,7 +184,7 @@ def check_commands():
 			giftcost = getcost()
 			global donors
 			global donations
-                        if len(donor_dict.keys()) > 10:
+                        if len(donor_dict.keys()) ==10:
                                 donors = []
      			        donations = []
      			        for x in donor_dict.keys():
