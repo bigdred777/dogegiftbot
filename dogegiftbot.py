@@ -16,7 +16,7 @@ bot_name = "multisigtest1"
 authorized = ['Doomhammer458']
 #login info
 r.login()                  #leave blank for praw config
-reentry_contact = ["Doomhammer458"]
+reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
 ###### config section ############
 
@@ -440,16 +440,16 @@ while True:
 		if balcheck == 12:
 			get_dtbinfo()
 			balcheck = 0
-		print "1"
+		j
 		if postcheck == 6:
 			check_posts()
 			postcheck = 0
-		print "2"
+		
 		if msgcheck == 0:
 			check_commands()
 			savelists(entries, already_won, done)
 			msgcheck = 0
-		print "3"
+		
 		balcheck += 1
 		repcount += 1
 		postcheck += 1
