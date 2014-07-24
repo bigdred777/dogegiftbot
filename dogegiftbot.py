@@ -8,7 +8,7 @@ import json
 import StringIO
 import traceback
 from dogegiftbottables import *
-r = praw.Reddit(user_agent='dogegiftbot version 0.1')
+r = praw.Reddit(user_agent='dogegiftbot version 0.2')
 
 ###### config section ############
 bot_name = "multisigtest1"
