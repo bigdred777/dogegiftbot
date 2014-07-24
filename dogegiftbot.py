@@ -268,11 +268,13 @@ def check_commands():
 			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			msg.mark_as_read()
+		""""
 		else:
 		    print "Processing invalid request"
-		    msg.reply("request not understood please reply with +entry, +optout or +history to have your request proccessed\n \n \
+		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed\n \n \
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
 		    msg.mark_as_read()
+		 """
 		print 'Request processed'
 		return True
 def get_winner(msg, entries):
