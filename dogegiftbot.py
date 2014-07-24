@@ -39,7 +39,7 @@ for msg in r.get_unread(limit=None):
 entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
 repcount = 0
-balcheck = 60
+last_bal_check = datetime.datetime.now() - datetime.timedelta(days=5)
 postcheck = 0
 first_run = 1
 done = get_posts()
@@ -445,10 +445,10 @@ while True:
 	print "entries"
 	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
-	if balcheck == 60:
+	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = 10):
 	   get_dtbinfo()
-	   balcheck = 0
-	balcheck += 1
+	   last_bal_check = datetime.datetime.now()
+
 	
 	if repcount < 120:
 		if postcheck == 6:
@@ -463,7 +463,8 @@ while True:
 		
 		repcount += 1
 		postcheck += 1
-		print 'bal: ' + str(balcheck)
+		print 'last balance check: ',
+		print last_bal_check
 		print 'rep: ' + str(repcount)
 		print 'pos: ' + str(postcheck)
 		time.sleep(30)
