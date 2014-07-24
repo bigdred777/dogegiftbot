@@ -117,7 +117,7 @@ def savelists(entries, already_won, done):
 		list.append(mooting)
 	for x in list:
 		file.write('%s \n' % x)
-	file2 = open('wonners.txt','w')
+	file2 = open('winners.txt','w')
 	list = []
 	for x in already_won:
 		mooting = str(x)
@@ -149,12 +149,17 @@ def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
 	for msg in msgs:
+	        if type(msg) != praw.objects.Message:
+	            msg.mark_as_read()
+	            print "NEW comment reply: ",
+	            print msg
+	            continue
 	        entries = get_entries()
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
 
-		if '+entry' in body:
+		if '+ent' in body:
 			print "Processing ENTRY request"
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
@@ -175,7 +180,8 @@ def check_commands():
 
 			
 			print 'Request processed'
-		elif '+optout'in body and auth in entries:
+			
+		elif '+opt'in body and auth in entries:
 			print 'Processing OPT-OUT request'
 			msg.mark_as_read()
 			remove_entry(auth)
@@ -183,7 +189,7 @@ def check_commands():
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			
 			print 'Request processed'
-		elif '+history' == body:
+		elif '+his' in body:
 			print "Processing HISTORY request"
 			
 			giftcost = getcost()
@@ -244,7 +250,10 @@ def check_commands():
 			msg.reply('Bot is shutting down')
 			global kill_var
 			kill_var = '9001'
+			msg.mark_as_read()
 			sys.exit()
+			raise Exception("SHUTDOWN")
+			
 		elif 'send random dogegiftbot' in body and auth in authorized:
 			print "Processing RANDOM SEND request"
 			giftcost = getcost()
@@ -268,14 +277,14 @@ def check_commands():
 			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			msg.mark_as_read()
-		""""
+		
 		else:
 		    print "Processing invalid request"
-		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed\n \n \
+		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed.\n \n \
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
 		    msg.mark_as_read()
-		 """
-		print 'Request processed'
+		 
+		    print 'Request processed'
 		return True
 def get_winner(msg, entries):
 	choose_winner = 0
