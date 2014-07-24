@@ -39,7 +39,7 @@ for msg in r.get_unread(limit=None):
 entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
 repcount = 0
-balcheck = 12
+balcheck = 60
 postcheck = 0
 first_run = 1
 done = get_posts()
@@ -78,18 +78,21 @@ def getDonors(text):
 	            if line.split()[0] == "tip":
 	                  
 	                
-		          if  counter < 10:
+
 		    
-		         	if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?":
+		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?"and counter <10:
 		         	        
 
 		         	        
-		        		if line.split()[2] not in dict.keys():
+		        	if line.split()[2] not in dict.keys():
 		        		        
-		           			dict[line.split()[2]] = float(line.split()[6])
-		           		        counter += 1
-		        		elif line.split()[2] in dict.keys():
-                                            dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+		           	  dict[line.split()[2]] = float(line.split()[6])
+		           	  counter += 1
+		        	elif line.split()[2] in dict.keys():
+                                    dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+                if counter == 10:
+                    break
+                    
 	print "donors "	   
 	print dict                              
         return dict	
@@ -150,11 +153,13 @@ def check_commands():
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
+
 		if '+entry' == body:
 			print "Processing ENTRY request"
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
 			comkarm = user.comment_karma
+			
 			if int(comkarm) > 49:
 				if auth not in entries and auth not in already_won:
 					add_entry(auth)
@@ -232,6 +237,8 @@ def check_commands():
 																													donations[9]))
 			print 'Request processed'
 			msg.mark_as_read()
+			
+		 
 		elif 'exit dogegiftbot' == body and auth in authorized:
 			print "Processing KILL request"
 			msg.reply('Bot is shutting down')
@@ -371,6 +378,7 @@ def get_winner(msg, entries):
 def get_dtbinfo():
 	global first_run
 	global balance
+	text = None
 	print "Checking balance"
 	r.send_message('dogetipbot','moot','+history')
 	print 'sent message'
@@ -382,7 +390,6 @@ def get_dtbinfo():
 		text_old = '/u/PieMan2201'
 	first_run = 0
 	balance = 0
-	text = None
 	balance_counter = 0
 	while balance == 0 and balance_counter < 18:
 		msgs = r.get_unread()
@@ -438,20 +445,22 @@ while True:
 	print "entries"
 	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
+	if balcheck == 60:
+	   get_dtbinfo()
+	   balcheck = 0
+	balcheck += 1
+	
 	if repcount < 120:
-		if balcheck == 12:
-			get_dtbinfo()
-			balcheck = 0
 		if postcheck == 6:
 			check_posts()
 			postcheck = 0
-		
+			
 		if msgcheck == 0:
 			check_commands()
 			savelists(entries, already_won, done)
 			msgcheck = 0
 		
-		balcheck += 1
+		
 		repcount += 1
 		postcheck += 1
 		print 'bal: ' + str(balcheck)
