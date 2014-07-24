@@ -11,7 +11,7 @@ from dogegiftbottables import *
 r = praw.Reddit(user_agent='dogegiftbot version 0.1')
 
 ###### config section ############
-bot_name = "Doomhammer458"
+bot_name = "multisigtest1"
 #authorized admins
 authorized = ['Doomhammer458']
 #login info
@@ -154,7 +154,7 @@ def check_commands():
 		id = msg.id
 		auth = msg.author.name
 
-		if '+entry' == body:
+		if '+entry' in body:
 			print "Processing ENTRY request"
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
@@ -175,7 +175,7 @@ def check_commands():
 
 			
 			print 'Request processed'
-		elif '+optout' == body and auth in entries:
+		elif '+optout'in body and auth in entries:
 			print 'Processing OPT-OUT request'
 			msg.mark_as_read()
 			remove_entry(auth)
@@ -239,13 +239,13 @@ def check_commands():
 			msg.mark_as_read()
 			
 		 
-		elif 'exit dogegiftbot' == body and auth in authorized:
+		elif 'exit' in body and auth in authorized:
 			print "Processing KILL request"
 			msg.reply('Bot is shutting down')
 			global kill_var
 			kill_var = '9001'
 			sys.exit()
-		elif 'send random dogegiftbot' == body and auth in authorized:
+		elif 'send random dogegiftbot' in body and auth in authorized:
 			print "Processing RANDOM SEND request"
 			giftcost = getcost()
 #			giftcost = 10
@@ -255,10 +255,10 @@ def check_commands():
 				print "BALANCE TOO LOW"
 				msg.reply('Balance too low')
 				msg.mark_as_read()		
-		elif 'force send random dogegiftbot' == body and auth in authorized:
+		elif 'force send random dogegiftbot' in body and auth in authorized:
 			print 'Processing FORCED RANDOM SEND request'
 			get_winner(msg, entries)
-		elif 'reenter' in body and 'dogegiftbot' in body:
+		elif 'reenter' in body and 'dogegiftbot' in body and auth in authorized:
 			print "Processing RE-ENTRY request"
 			reentree = msg.body[8:-12]
 			print reentree + " will be re-entered"
@@ -490,12 +490,13 @@ while True:
  	savelists(entries, already_won, done)
  	sys.exit()
     except:
-
- 	time.sleep(20)
  	savelists(entries, already_won, done)
  	if kill_var == '9001':
- 		sys.exit()
+ 	      while True:
+ 	          sys.exit()
+ 	          time.sleep(20)
  	print "exception traceback"
  	traceback.print_exc() 
  	print 'Please send the above information to the author of this program'
+ 	time.sleep(10)
  	continue 
