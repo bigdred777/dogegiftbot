@@ -159,8 +159,8 @@ def check_commands():
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
 			comkarm = user.comment_karma
-			
-			if int(comkarm) > 49:
+			linkkarm = user.link_karma
+			if int(comkarm) > 49 or int(linkkarm) > 49:
 				if auth not in entries and auth not in already_won:
 					add_entry(auth)
 					msg.reply('''You have been entered into the giveaway!  
