@@ -12,7 +12,7 @@ import hashlib
 r = praw.Reddit(user_agent='dogegiftbot version 0.2')
 
 ###### config section ############
-bot_name = "multisigtest1"
+bot_name = "Doomhammer458"
 #authorized admins
 authorized = ['Doomhammer458']
 #login info
@@ -200,7 +200,12 @@ def check_commands():
 		            continue
 			print "Processing HISTORY request"
 			
-			giftcost = getcost()
+			giftcost = float(getcost())
+			print_bal = float(balance)
+			while print_bal > giftcost:
+			    print_bal -= giftcost
+			
+			    
 
                         donors = []
                         donations = []
@@ -229,26 +234,9 @@ def check_commands():
  or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
  If you send Dogecoin from your wallet, you will not be featured as a donor.  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' % (balance,giftcost,str(float(giftcost) - float(balance)), donors[0], 
-																													donations[0], 
-																													donors[1], 
-																													donations[1], 
-																													donors[2], 
-																													donations[2], 
-																													donors[3],
-																													donations[3],
-																													donors[4],
-																													donations[4],
-																													donors[5],
-																													donations[5],
-																													donors[6],
-																													donations[6],
-																													donors[7], 
-																													donations[7],
-																													donors[8],
-																													donations[8],
-																													donors[9],
-																													donations[9]))
+ ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))), donors[0], \
+                                                        donations[0], donors[1],donations[1],donors[2],donations[2],donors[3],donations[3],donors[4],donations[4],\
+                                                        donors[5],donations[5],	donors[6],donations[6],	donors[7],donations[7],donors[8],donations[8],donors[9],donations[9]))
 			print 'Request processed'
 			msg.mark_as_read()
 			
