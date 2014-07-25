@@ -275,7 +275,7 @@ def check_commands():
 			msg.mark_as_read()
 		
 		else:
-		    if auth == dogetipbot:
+		    if auth == "dogetipbot":
 		        msg.mark_as_read()
 		        print "dogetipbot message"
 		        print body
