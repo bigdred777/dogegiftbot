@@ -49,6 +49,8 @@ class Transactions(Base):
     donor = Column(String)
     date = Column(String)
     address = Column(String)
+    def __repr__(self):
+        return "<type: %s donor: %s amount: %.2f >" % (self.tx_type,self.donor,self.amount)
 
 def create_session():
     """
@@ -163,3 +165,78 @@ if __name__ == "__main__":
                 break
             add_entry(line.strip())
         
+def add_history_to_db(tip_bot_text,bot_name):
+    text = tip_bot_text.replace('|',' ').encode("ascii","replace")
+    text2 = text.split("\n")
+    text3 = []
+    tips = {}
+    d = {}
+    w={}
+    for line in text2:
+        if bot_name in line:
+            text3.append(line.split())
+    for tx in text3:
+        if tx[1] == "failed":
+            continue
+        if tx[0] == "tip":
+            name = tx[2]+ " " + tx[4]
+            if name in tips:
+                tips[name] += float(tx[6])
+            else:
+                tips[name] = float(tx[6])
+        elif tx[0] == "d":
+            name =  tx[4]
+            if name in d:
+                d[name] += float(tx[6])
+            else:
+                d[name] = float(tx[6])
+        elif tx[0] == "w":
+           
+            name =  tx[4] + " " +tx[5]
+            if name in w:
+                w[name] += float(tx[6])
+            else:
+                w[name] = float(tx[6])
+
+    session = create_session()
+    
+    for item in tips.keys():
+        donor = item.split()[0]
+        date = item.split()[1]
+        search = session.query(Transactions).filter(Transactions.donor == donor,Transactions.date == date).first()
+        if search == None:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "tip",amount=tips[item]))
+        else:
+            if search.amount < tips[item]:  
+                search.amount = tips[item]
+                session.add(search)
+    for item in d.keys():
+        donor = "anonymous deposit"
+        date = item
+        search = session.query(Transactions).filter(Transactions.donor == donor,Transactions.date == date).first()
+        if search == None:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "deposit",amount=d[item]))
+        else:
+            if search.amount < d[item]:  
+                search.amount = d[item]
+                session.add(search)
+    for item in w.keys():
+        donor = "withdraw"
+        date = item.split()[0]
+        address = item.split()[1]
+        search = session.query(Transactions)\
+        .filter(Transactions.donor == donor,Transactions.date == date, Transactions.address==address).first()
+        if search == None:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "withdraw",amount=w[item],address=address))
+        else:
+            if search.amount < w[item]:  
+                search.amount = w[item]
+                session.add(search)
+        
+    
+    session.commit()
+    return
+    
+
+        
+    

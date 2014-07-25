@@ -8,6 +8,7 @@ import json
 import StringIO
 import traceback
 from dogegiftbottables import *
+import hashlib
 r = praw.Reddit(user_agent='dogegiftbot version 0.2')
 
 ###### config section ############
@@ -18,6 +19,7 @@ authorized = ['Doomhammer458']
 r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
+freq_bal_check = 5 # time in minute
 ###### config section ############
 
 
@@ -32,7 +34,7 @@ print 'LOGIN SUCCESS'
 kill_var = '321'
 winners = []
 msgcheck = 0
-
+history_hash = None
 balance = 0
 for msg in r.get_unread(limit=None):
 	msg.mark_as_read()
@@ -154,10 +156,13 @@ def check_commands():
 	            print "NEW comment reply: ",
 	            print msg
 	            continue
+	        
 	        entries = get_entries()
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
+		if "accept" in body[:8]:
+		    continue
 
 		if '+ent' in body:
 			print "Processing ENTRY request"
@@ -190,6 +195,9 @@ def check_commands():
 			
 			print 'Request processed'
 		elif '+his' in body:
+		        if auth == "dogetipbot":
+		            msg.mark_as_read()
+		            continue
 			print "Processing HISTORY request"
 			
 			giftcost = getcost()
@@ -394,6 +402,7 @@ def get_winner(msg, entries):
 def get_dtbinfo():
 	global first_run
 	global balance
+	global history_hash
 	text = None
 	print "Checking balance"
 	r.send_message('dogetipbot','moot','+history')
@@ -418,6 +427,7 @@ def get_dtbinfo():
 				print "balance: "+balance + ' DOGE'
 				x.mark_as_read()
 				text = x.body.lower()
+				new_history_hash = hashlib.md5(text.encode("ascii","replace")).hexdigest()
 				
 		balance_counter += 1
 		if balance_counter == 18:
@@ -428,8 +438,13 @@ def get_dtbinfo():
 		    break
 		time.sleep(20)
 	global donor_dict
-	
-	donor_dict = getDonors(text)
+	if new_history_hash == history_hash:
+	    print "no new tips"
+	    return
+	else:
+	    history_hash = new_history_hash
+	    add_history_to_db(text,bot_name)
+	    donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
 	submissions = r.get_subreddit('dogecoin').get_new(limit=25)
@@ -461,7 +476,7 @@ while True:
 	print "entries"
 	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
-	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = 10):
+	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
 	   get_dtbinfo()
 	   last_bal_check = datetime.datetime.now()
 
