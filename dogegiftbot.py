@@ -287,6 +287,12 @@ def check_commands():
 			msg.mark_as_read()
 		
 		else:
+		    if auth == dogetipbot:
+		        msg.mark_as_read()
+		        print "dogetipbot message"
+		        print body
+		        print
+		        continue
 		    print "Processing invalid request"
 		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed.\n \n \
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
