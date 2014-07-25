@@ -18,8 +18,8 @@ authorized = ['Doomhammer458']
 #login info
 r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
-subreddit_to_post = "dogetrivia"
-freq_bal_check = 5 # time in minute
+subreddit_to_post = "dogecoin"
+freq_bal_check = 10 # time in minute
 ###### config section ############
 
 
@@ -53,10 +53,12 @@ lower_body = 'bnipdsn'
 
 already_won = get_winners()
 winning_message = '''You have won a dogegiftbot giveaway!   
-Reply with "accept [name of gift-card] dogegiftbot" to claim a gift-card from [egifter.com](https://www.egifter.com/giftcards)  
-If you would like to pass the gift, reply with "pass random dogegiftbot" to pass it to a random person.  
-Reply with "pass [name of redditor] dogegiftbot" to pass it to a specific redditor.  
-You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.  
+Reply with "accept [name of gift-card] dogegiftbot" to claim your gift-card from [egifter.com](https://www.egifter.com/giftcards) 
+Simply go to their website and pick what company you would like your gift card from. Example, if you were to pick Amazon as your the
+card you would like for your gift. The accept command would look like this "+accept Amazon dogegiftbot" 
+If you would like to pass the gift to another random person, reply with "pass random dogegiftbot".  
+If you would like to pass to a certain Redditor who is in the giveaway,  then reply with "pass [name of redditor] dogegiftbot" to pass it to a specific redditor.  
+You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.    
 %s
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w    
 THIS IS A TEST. PLEASE FOLLOW THE INSTRUCTIONS EVEN THOUGH YOU WILL NOT BE REWARDED.'''
@@ -178,7 +180,7 @@ def check_commands():
 					print auth + ' has entered'
 				else:
 					msg.reply('Silly shibe! You can only enter once.')
-					print auth + ' is a meatbag'
+					print auth + ' is a silly shibe'
 			else:
 				print auth + ' does not meet requirements'
 				msg.reply("I'm sorry, but you do not have sufficient comment karma to register. You need at least 50 comment karma to enter.")
@@ -324,10 +326,11 @@ def get_winner(msg, entries):
 			print winner + ' won!'
 		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text="""The winner is...   
  **/u/%s**! Congratulations!  
- They have been picked as the winner of this round, and have the option of selecting a $25 gift-card purchased with Dogecoin!  
- A PM has been sent to the winner with more details.  
- We would like to thank all members of the community here at /r/dogecoin. Without you, this wouldn't be possible.  
- A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Without them, this little dream would have never come true.  
+ You are the winner of this round of a $25 gift-card purchased with Dogecoin!  
+ A PM has been sent to you with more details.  
+ We would like to thank all members of the community here at /r/dogecoin. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
+ A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Check out their site
+and maybe you might see a gift card you or someone you know might like.  :)  And of course they do accept doge coins for payment.  
  If you would like to participate in dogegiftbot giveaways, simply click [here](%s).  
  If you want to opt-out of these giveaways, click [here](%s).  
  If you would like to see some information on the current round, click [here](%s).  
@@ -357,8 +360,7 @@ def get_winner(msg, entries):
 					for x in authorized:
 						r.send_message(x,'Gift Card','%s choose the %s gift card' % (msg.author.name, forward_t))
 					choice = 'boo'
-					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please create a submission that contains a link to a picture of your giftcard.  
- Then, create a comment on that submission that contains the text `enter again dogegiftbot`.  
+					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please take a picture of something you purchased with your gift card. Also, write your reddit username on a piece of paper and include that in the picture. Then, create a new comment thread on /r/dogecoin with the picture you have taken, and also include the command `enter again dogegiftbot`.  Admins will view your picture and approve your re-entry if they feel picture was legitmate.  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
 					address = getaddress(msg.author.name,forward_t)
 					cost = getcost()
