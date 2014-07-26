@@ -38,6 +38,7 @@ class Contests(Base):
     date = Column(String, primary_key = True)
     winner = Column(String)
     prize = Column(String)
+    prize_claimed = Column(Boolean)
 class Posts(Base):
     post_id = Column(String, primary_key = True)
     __tablename__ = "posts"
@@ -126,15 +127,15 @@ def add_post(Post):
 def get_winners():
 
     session = create_session()
-    all_winners = session.query(Contests).all()
+    all_winners = session.query(Contests).filter(Contests.prize_claimed==False).all()
     session.close()
 
     winners = []
     for item in all_winners:
         winners.append(item.winner)
     return winners    
-def add_winner(Winner):
-    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()))
+def add_winner(Winner,prize=None,claim=False):
+    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim)
     session = create_session()
     session.add(db_add)
     session.commit()
