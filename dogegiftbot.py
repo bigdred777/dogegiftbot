@@ -176,15 +176,14 @@ def check_commands():
 			if int(comkarm) > 49 or int(linkkarm) > 49:
 				if auth not in entries and (auth not in already_won or auth not in banned):
 					add_entry(auth)
-					msg.reply('''You have been entered into the giveaway!  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
+					msg.reply('You have been entered into the giveaway! '+m.footer)
 					print auth + ' has entered'
 				else:
-					msg.reply('Silly shibe! You can only enter once.')
+					msg.reply('Silly shibe! You can only enter once.'+m.footer)
 					print auth + ' is a silly shibe'
 			else:
 				print auth + ' does not meet requirements'
-				msg.reply("I'm sorry, but you do not have sufficient comment karma to register. You need at least 50 comment karma to enter.")
+				msg.reply("I'm sorry, but you do not have sufficient comment / link karma  to register. You need at least 50 comment / link karma to enter."+m.footer)
 
 			
 			print 'Request processed'
@@ -193,8 +192,7 @@ def check_commands():
 			print 'Processing OPT-OUT request'
 			msg.mark_as_read()
 			remove_entry(auth)
-			msg.reply('''You have been removed from the giveaway.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
+			msg.reply('You have been removed from the giveaway. '+m.footer)
 			
 			print 'Request processed'
 		elif '+his' in body:
@@ -207,40 +205,13 @@ def check_commands():
 			print_bal = float(balance)
 			while print_bal > giftcost:
 			    print_bal -= giftcost
-			
-			    
-
-                        donors = []
-                        donations = []
+                        hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(donor_dict))
      			for x in donor_dict.keys():
-        			donors.append(x)
-        			donations.append(donor_dict[x])
-			print donors 
-			print donations
-			msg.reply('''My balance is %s DOGE  
- My goal is %s DOGE  
- I need %s DOGE to reach my goal.  
- The last 10 donors are:
+     			    hist_mes += m.history_mid % (x,donor_dict[x])
+			hist_mes += m.history_bottom 
+			msg.reply(hist_mes)
  
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
-
- To donate, you can either tip me using /u/dogetipbot,  
- or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
- If you send Dogecoin from your wallet, you will not be featured as a donor.  
- ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))), donors[0], \
-                                                        donations[0], donors[1],donations[1],donors[2],donations[2],donors[3],donations[3],donors[4],donations[4],\
-                                                        donors[5],donations[5],	donors[6],donations[6],	donors[7],donations[7],donors[8],donations[8],donors[9],donations[9]))
-			print 'Request processed'
+                        print 'Request processed'
 			msg.mark_as_read()
 			
 		 
@@ -274,8 +245,7 @@ def check_commands():
 			add_entry(reentree)
 			remove_winner(reentree)
 			msg.reply(reentree + ' has been re-entered into the drawing.')
-			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
+			r.send_message(reentree,'Re-entry','You have been re-entered into the drawing!' +m.footer  )
 			msg.mark_as_read()
 		
 		elif '+accept' in body and auth in already_won:
@@ -286,32 +256,11 @@ def check_commands():
 		    msg.mark_as_read()
 		    
 		    
-		    """
-		    
-		    msg.mark_as_read()
-					forward = str(msg.body.lower())[:-12]
-					forward_t = str(forward)[7:]
-					
-					for x in authorized:
-						r.send_message(x,'Gift Card','%s choose the %s gift card' % (msg.author.name, forward_t))
-					choice = 'boo'
-					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please take a picture of something you purchased with your gift card. Also, write your reddit username on a piece of paper and include that in the picture. Then, create a new comment thread on /r/dogecoin with the picture you have taken, and also include the command `enter again dogegiftbot`.  Admins will view your picture and approve your re-entry if they feel picture was legitmate.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
-					address = getaddress(msg.author.name,forward_t)
-					cost = getcost()
-					r.send_message('dogetipbot',forward_t + 'for' + msg.author.name, '+withdraw %s %s doge' % (address, str(cost)))
-					print address
-					if msg.author.name in entries:
-						remove_entry(msg.author.name)
-					add_winner(msg.author.name)
-					print winner + ' has claimed the ' + forward_t + ' gift card'
-					exit_var = 'exit'
-		  """
+
 		    
 		else:   
 		    print "Processing invalid request"
-		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed.\n \n \
-^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
+		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed."+m.footer)
 		    msg.mark_as_read()
 		 
 		    print 'Request processed'
@@ -360,6 +309,8 @@ def get_winner(msg, entries):
 		add_winner(winner)
 		remove_entry(winner)
 		return 
+		
+		
 def send_prize(Winner,prize):
     for x in authorized:
         r.send_message(x,'Gift Card','%s choose the %s gift card' % (Winner, prize))

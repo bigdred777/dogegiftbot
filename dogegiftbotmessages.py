@@ -1,5 +1,6 @@
 class dogegiftbotmessages():
     def __init__(self):
+        self.footer = " \n \n ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w"
         self.win_post = """The winner is...   
  **/u/%s**! Congratulations!  
  You are the winner of this round of a $25 gift-card purchased with Dogecoin!  
@@ -15,7 +16,7 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
  ^Coded ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http://www.bots4doge.com)   
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w"""
+""" +self.footer
  #winner, entry link , optout link , history link
  
         self.entry_link="http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Bentry"
@@ -29,6 +30,22 @@ If you would like to pass the gift to another random person, reply with "pass ra
 If you would like to pass to a certain Redditor who is in the giveaway,  then reply with "pass [name of redditor] dogegiftbot" to pass it to a specific redditor.  
 You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.    
 %s
-^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w    
-THIS IS A TEST. PLEASE FOLLOW THE INSTRUCTIONS EVEN THOUGH YOU WILL NOT BE REWARDED.'''
-        self.accept_link = "http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Baccept%20PRIZE"
+
+''' +self.footer
+
+        self.accept_link = "http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Baccept%20PRIZE"   
+        self.history_top = '''My balance is %s DOGE  
+ My goal is %s DOGE  
+ I need %s DOGE to reach my goal.  
+ The last %i donors are:
+'''
+        # balance, cost, balance-cost, len (donors)
+        self.history_mid = '\n * %s - %s doge'
+        #donor, donation
+        
+        self.history_bottom = '''\n\n
+ To donate, you can either tip me using /u/dogetipbot,  
+ or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
+ If you send Dogecoin from your wallet, you will not be featured as a donor.  
+ ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
+ ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' +self.footer
