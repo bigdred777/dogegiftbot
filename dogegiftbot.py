@@ -18,7 +18,7 @@ authorized = ['Doomhammer458']
 #login info
 r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
-subreddit_to_post = "dogecoin"
+subreddit_to_post = "dogetrivia"
 freq_bal_check = 10 # time in minute
 ###### config section ############
 
@@ -36,8 +36,7 @@ winners = []
 msgcheck = 0
 history_hash = None
 balance = 0
-for msg in r.get_unread(limit=None):
-	msg.mark_as_read()
+
 entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
 repcount = 0
@@ -163,10 +162,20 @@ def check_commands():
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
-		if "accept" in body[:8]:
-		    continue
+		if auth== "dogetipbot":
+		    print "dogetipbot message"
+		    if 'here are your last' in body:
+                        get_dtbinfo(body)
+                        msg.mark_as_read()
+		    else:
+		        msg.mark_as_read()
+		       
+		        print body
+		        print
+		        continue
 
-		if '+ent' in body:
+		
+		elif '+ent' in body:
 			print "Processing ENTRY request"
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
@@ -277,12 +286,8 @@ def check_commands():
 			msg.mark_as_read()
 		
 		else:
-		    if auth == "dogetipbot":
-		        msg.mark_as_read()
-		        print "dogetipbot message"
-		        print body
-		        print
-		        continue
+		    
+		        
 		    print "Processing invalid request"
 		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed.\n \n \
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
@@ -395,45 +400,25 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
 				r.send_message(winner, 'Sorry!', "We regret to inform you that you're time has expired. The gift will be passed to another participant.")
 				choose_winner = 0
 			time.sleep(30)
-def get_dtbinfo():
-	global first_run
+def get_dtbinfo(Text):
 	global balance
 	global history_hash
-	text = None
-	print "Checking balance"
-	r.send_message('dogetipbot','moot','+history')
-	print 'sent message'
-	if first_run == 0:
-		balance_old = balance
-		text_old = text
-	else:
-		balance_old = '9001'
-		text_old = '/u/PieMan2201'
-	first_run = 0
-	balance = 0
-	balance_counter = 0
-	while balance == 0 and balance_counter < 18:
-		msgs = r.get_unread()
-#		print 'moot'
-		for x in msgs:
-#			print 'moot2'
-			if x.author.name == 'dogetipbot' and 'here are your last' in x.body.lower():
-				
-				balance = x.body.split()[13][2:]
-				print "balance: "+balance + ' DOGE'
-				x.mark_as_read()
-				text = x.body.lower()
-				new_history_hash = hashlib.md5(text.encode("ascii","replace")).hexdigest()
-				
-		balance_counter += 1
-		if balance_counter == 18:
-			print 'Time limit exceeded, balance update FAILED'
-			balance = balance_old
-			text = text_old
-		if balance > 0:
-		    break
-		time.sleep(20)
 	global donor_dict
+	text = Text
+	print "Checking balance"
+
+				
+	balance = text.split()[13][2:]
+	   
+	print "balance: "+balance + ' DOGE'
+				
+				
+	new_history_hash = hashlib.md5(text.encode("ascii","replace")).hexdigest()
+				
+
+	
+		
+	
 	if new_history_hash == history_hash:
 	    print "no new tips"
 	    return
@@ -473,7 +458,8 @@ while True:
 	print entries
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
 	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
-	   get_dtbinfo()
+	   print "Sending history request to dogetipbot"
+	   r.send_message('dogetipbot','hist','+history')
 	   last_bal_check = datetime.datetime.now()
 
 	
