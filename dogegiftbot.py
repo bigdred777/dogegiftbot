@@ -174,7 +174,7 @@ def check_commands():
 			comkarm = user.comment_karma
 			linkkarm = user.link_karma
 			if int(comkarm) > 49 or int(linkkarm) > 49:
-				if auth not in entries and auth not in already_won:
+				if auth not in entries and (auth not in already_won or auth not in banned):
 					add_entry(auth)
 					msg.reply('''You have been entered into the giveaway!  
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
@@ -278,9 +278,37 @@ def check_commands():
  ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
 			msg.mark_as_read()
 		
-		else:
+		elif '+accept' in body and auth in already_won:
+		    prize = body.split("+accept ")
+		    prize = prize[1].split()[0]
+		    send_prize(auth,prize)
+		    add_winner(auth,prize,True)
+		    msg.mark_as_read()
 		    
-		        
+		    
+		    """
+		    
+		    msg.mark_as_read()
+					forward = str(msg.body.lower())[:-12]
+					forward_t = str(forward)[7:]
+					
+					for x in authorized:
+						r.send_message(x,'Gift Card','%s choose the %s gift card' % (msg.author.name, forward_t))
+					choice = 'boo'
+					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please take a picture of something you purchased with your gift card. Also, write your reddit username on a piece of paper and include that in the picture. Then, create a new comment thread on /r/dogecoin with the picture you have taken, and also include the command `enter again dogegiftbot`.  Admins will view your picture and approve your re-entry if they feel picture was legitmate.  
+ ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
+					address = getaddress(msg.author.name,forward_t)
+					cost = getcost()
+					r.send_message('dogetipbot',forward_t + 'for' + msg.author.name, '+withdraw %s %s doge' % (address, str(cost)))
+					print address
+					if msg.author.name in entries:
+						remove_entry(msg.author.name)
+					add_winner(msg.author.name)
+					print winner + ' has claimed the ' + forward_t + ' gift card'
+					exit_var = 'exit'
+		  """
+		    
+		else:   
 		    print "Processing invalid request"
 		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed.\n \n \
 ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w")
@@ -332,28 +360,22 @@ def get_winner(msg, entries):
 		add_winner(winner)
 		remove_entry(winner)
 		return 
-		"""
-		while choice == 0 and timer < 8640:
-			msgs = r.get_unread(limit=None)
-			for msg in msgs:
-				if '+accept' in msg.body.lower() and 'dogegiftbot' in msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					msg.mark_as_read()
-					forward = str(msg.body.lower())[:-12]
-					forward_t = str(forward)[7:]
-					for x in authorized:
-						r.send_message(x,'Gift Card','%s choose the %s gift card' % (msg.author.name, forward_t))
-					choice = 'boo'
-					msg.reply('''You choose the %s giftcard. If you would like to be re-entered into the giveaway, please take a picture of something you purchased with your gift card. Also, write your reddit username on a piece of paper and include that in the picture. Then, create a new comment thread on /r/dogecoin with the picture you have taken, and also include the command `enter again dogegiftbot`.  Admins will view your picture and approve your re-entry if they feel picture was legitmate.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
-					address = getaddress(msg.author.name,forward_t)
-					cost = getcost()
-					r.send_message('dogetipbot',forward_t + 'for' + msg.author.name, '+withdraw %s %s doge' % (address, str(cost)))
-					print address
-					if msg.author.name in entries:
-						remove_entry(msg.author.name)
-					add_winner(msg.author.name)
-					print winner + ' has claimed the ' + forward_t + ' gift card'
-					exit_var = 'exit'
+def send_prize(Winner,prize):
+    for x in authorized:
+        r.send_message(x,'Gift Card','%s choose the %s gift card' % (Winner, prize))
+        
+
+    address = getaddress(Winner,prize)
+    cost = getcost()
+    r.send_message('dogetipbot',prize + 'for' + Winner, '+withdraw %s %s doge' % (address, str(cost)))
+    print address
+    print Winner + ' has claimed the ' + prize + ' gift card'
+    return
+        
+    """
+
+					
+					
 				elif 'pass random dogegiftbot' == msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
 					lower_body = msg.body.lower()
 					choice = 'boo'
@@ -433,11 +455,16 @@ while True:
         already_won = get_winners()
 	entries = get_entries()
 	done = get_posts()
+	banned = get_banned()
 	print "entries"
 	print entries
 	if len(already_won)>0:
 	   print "winners"
 	   print already_won
+	if len(banned)>0:
+	   print "Waiting for rentry"
+	   print banned
+
 	print 'A giftcard costs ' + str(getcost()) + ' doge' 
 	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
 	   print "Sending history request to dogetipbot"

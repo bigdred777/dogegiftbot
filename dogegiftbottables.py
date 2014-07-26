@@ -134,13 +134,33 @@ def get_winners():
     for item in all_winners:
         winners.append(item.winner)
     return winners    
-def add_winner(Winner,prize=None,claim=False):
-    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim)
+def get_banned():
+    
     session = create_session()
-    session.add(db_add)
+    all_winners = session.query(Contests).filter(Contests.prize_claimed==True).all()
+    session.close()
+
+    winners = []
+    for item in all_winners:
+        winners.append(item.winner)
+    return winners  
+    
+def add_winner(Winner,prize=None,claim=False):
+    session = create_session()
+    search = session.query(Contests).filter(Contests.winner==Winner).first()
+    if search != None:
+        search.prize = prize 
+        search.prize_claimed = claim
+        session.add(search)
+    else:
+    
+        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim)
+    
+        session.add(db_add)
     session.commit()
     print "added winner " + Winner 
     return 1
+
 def remove_winner(Winner):
     session = create_session()
     
