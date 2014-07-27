@@ -150,7 +150,7 @@ def get_banned():
 def new_contest(Winner):
     session = create_session()
         
-    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = None,prize_claimed=False, archived = False)
+    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = None,prize_claimed=False, archived = False)
     
     session.add(db_add)
     session.commit()
@@ -173,7 +173,7 @@ def add_winner(Winner,prize=None,claim=False,archived=False):
         print " modified winner " + Winner
     else:
     
-        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim, archived = archived)
+        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = prize,prize_claimed=claim, archived = archived)
     
         session.add(db_add)
         print "added winner " + Winner 
