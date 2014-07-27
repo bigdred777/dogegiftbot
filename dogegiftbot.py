@@ -257,6 +257,7 @@ def check_commands():
 		    prize = prize[1].split()[0]
 		    send_prize(auth,prize)
 		    add_winner(auth,prize=prize,claim=True)
+		    msg.reply("prize claimed!")
 		    msg.mark_as_read()
 		    
 		elif 'pass' in body and auth in already_won:
@@ -318,15 +319,23 @@ def get_winner(msg, entries,winner=None):
 					if time.time() - x.created_utc < 1209600:
 						verified = True
 						print 'VERIFIED'
+						break
 					else: 
 						for y in redd_posts:
 							if time.time() - y.created_utc < 1209600:
 								verified = True
 								print 'VERIFIED'
+								break
 							else:
 								verified = False
 								winner = None
 								print 'NOT VERIFIED'
+								continue
+					        verified = False
+					        winner = None
+					        print 'NOT VERIFIED'
+					        continue
+
 								
 				time.sleep(5)
 			print winner + ' won!'
