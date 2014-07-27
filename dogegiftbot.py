@@ -151,6 +151,8 @@ def check_commands():
 	            continue
 	        
 	        entries = get_entries()
+	        already_won=get_winners()
+	        banned=get_banned()
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
@@ -238,9 +240,10 @@ def check_commands():
 				msg.reply('Balance too low')
 				msg.mark_as_read()		
 
-		elif 'reenter' in body and 'dogegiftbot' in body and auth in authorized:
+		elif 'reenter' in body and auth in authorized:
 			print "Processing RE-ENTRY request"
-			reentree = msg.body[8:-12]
+			reentree = body.split("reenter")[1].split()[0]
+			reentree = r.get_redditor(reentree).name
 			print reentree + " will be re-entered"
 			
 			add_winner(reentree,archived=True)
@@ -256,7 +259,28 @@ def check_commands():
 		    add_winner(auth,prize=prize,claim=True)
 		    msg.mark_as_read()
 		    
+		elif 'pass' in body and auth in already_won:
+		    print "proccessing pass request"
 		    
+		    passed_to = body.split("pass ")[1].split()[0]
+		    if passed_to == 'random':
+		        
+		        get_winner(msg,entries)
+		        msg.reply("You have passed on the prize to a random winner"+m.footer)
+		        remove_winner(auth)
+		        
+                    else:
+                        try:
+                            p = r.get_redditor(passed_to).name
+                            get_winner(msg,entries,p)
+                            msg.reply("You have passed the prize to " + passed_to +m.footer) 
+                            remove_winner(auth)
+                    
+                        except:
+                            msg.reply("Please pick a valid redditor")
+                    
+                    msg.mark_as_read()
+                    print 'Request processed'
 
 		    
 		else:   
@@ -265,23 +289,27 @@ def check_commands():
 		    msg.mark_as_read()
 		 
 		    print 'Request processed'
-		return True
-def get_winner(msg, entries):
+	
+def get_winner(msg, entries,winner=None):
 	choose_winner = 0
 	exit_var = 'stay alive'
-	passer = 'I am IRON MAN!'
+	if winner:
+	    verified = True
+	else:
+	    verified = False
+	       
 	while exit_var != 'exit':
 		line_message = ' '
 		if choose_winner == 0:
 			print "Choosing winner"
 			if msg != 'moot':
 				msg.mark_as_read()
-			rand = random.randrange(0,len(entries))
-			winner = entries[rand]
-			verified = False
-			while winner == passer or verified == False:
-				rand = random.randrange(0,len(entries))
-				winner = entries[rand]
+			
+			
+			
+			while  verified == False:
+				if winner == None:    
+				    winner = random.choice(entries)
 				redditor = r.get_redditor(winner)
 				redd_comments = redditor.get_comments(limit=1)
 				redd_posts = redditor.get_submitted(limit=1)
@@ -297,7 +325,9 @@ def get_winner(msg, entries):
 								print 'VERIFIED'
 							else:
 								verified = False
+								winner = None
 								print 'NOT VERIFIED'
+								
 				time.sleep(5)
 			print winner + ' won!'
 		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
@@ -325,29 +355,6 @@ def send_prize(Winner,prize):
         
     """
 
-					
-					
-				elif 'pass random dogegiftbot' == msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					lower_body = msg.body.lower()
-					choice = 'boo'
-					print winner + ' has passed randomly'
-					msg.reply('''The gift has been passed on.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
-					msg.mark_as_read()
-					passer = msg.author.name
-				elif 'pass' in msg.body.lower() and 'dogegiftbot' in msg.body.lower() and 'pass random dogegiftbot' not in msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					lower_body = msg.body.lower()
-					choice = 'boo'
-					winner2 = winner
-					msg.mark_as_read()
-					choose_winner = 'not 0'
-					winner = lower_body[5:-12]
-					msg.reply('''You have passed the gift to %s    
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % winner)					
-					print winner2 + ' has passed to ' + winner
-			check_commands()
-			timer += 1
-			if timer == 8640:
 				r.send_message(winner, 'Sorry!', "We regret to inform you that you're time has expired. The gift will be passed to another participant.")
 				choose_winner = 0
 			time.sleep(30)
@@ -392,7 +399,8 @@ def check_posts():
 					print 'Comment ID: ' + comment.id
 					print 'Processing RE-ENTRY post'
 					link = 'http://redd.it/' + x.id
-					r.send_message(reentry_contact,'Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
+					r.send_message(reentry_contact,'Request for re-entry','%s has requested re-entry in [this](%s) post \n\n' % (comment.author.name, link)\
+					+"[+reenter]("+m.reenter_link+comment.author.name+")")
 					add_post(comment.id)
 					print 'Post processed'
 					break

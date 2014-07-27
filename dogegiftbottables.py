@@ -170,7 +170,7 @@ def add_winner(Winner,prize=None,claim=False,archived=False):
 
 
         session.add(search)
-        print " modified winner" + Winner
+        print " modified winner " + Winner
     else:
     
         db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim, archived = archived)
@@ -186,8 +186,8 @@ def add_winner(Winner,prize=None,claim=False,archived=False):
 def remove_winner(Winner):
     session = create_session()
     
-    db_remove = session.query(Contests.winner == Winner).first()
-    
+    db_remove = session.query(Contests).filter(Contests.winner==Winner,Contests.archived==False).first()
+    print "removed " + db_remove.winner
     session.delete(db_remove)
     session.commit()
      
