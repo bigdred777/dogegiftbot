@@ -39,6 +39,9 @@ class Contests(Base):
     winner = Column(String)
     prize = Column(String)
     prize_claimed = Column(Boolean)
+    archived = Column(Boolean)
+ 
+    
 class Posts(Base):
     post_id = Column(String, primary_key = True)
     __tablename__ = "posts"
@@ -112,7 +115,7 @@ def get_posts():
 
     posts = []
     for item in all_posts:
-        posts.append(item.user)
+        posts.append(item.post_id)
     return posts
     
 def add_post(Post):
@@ -127,7 +130,7 @@ def add_post(Post):
 def get_winners():
 
     session = create_session()
-    all_winners = session.query(Contests).filter(Contests.prize_claimed==False).all()
+    all_winners = session.query(Contests).filter(Contests.prize_claimed==False,Contests.archived==False).all()
     session.close()
 
     winners = []
@@ -137,29 +140,48 @@ def get_winners():
 def get_banned():
     
     session = create_session()
-    all_winners = session.query(Contests).filter(Contests.prize_claimed==True).all()
+    all_winners = session.query(Contests).filter(Contests.prize_claimed==True,Contests.archived==False).all()
     session.close()
 
     winners = []
     for item in all_winners:
         winners.append(item.winner)
     return winners  
-    
-def add_winner(Winner,prize=None,claim=False):
+def new_contest(Winner):
     session = create_session()
-    search = session.query(Contests).filter(Contests.winner==Winner).first()
+        
+    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = None,prize_claimed=False, archived = False)
+    
+    session.add(db_add)
+    session.commit()
+    print "added winner " + Winner
+    
+def add_winner(Winner,prize=None,claim=False,archived=False):
+    session = create_session()
+    search= session.query(Contests).filter(Contests.winner==Winner,Contests.archived==False).first()
     if search != None:
-        search.prize = prize 
-        search.prize_claimed = claim
+        if archived == True:
+
+            search.archived = archived
+        if prize !=None:
+            search.prize = prize
+        if claim == True:
+            search.prize_claimed = True
+
+
         session.add(search)
+        print " modified winner" + Winner
     else:
     
-        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim)
+        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.now()),prize = prize,prize_claimed=claim, archived = archived)
     
         session.add(db_add)
+        print "added winner " + Winner 
     session.commit()
-    print "added winner " + Winner 
+    
     return 1
+
+     
 
 def remove_winner(Winner):
     session = create_session()

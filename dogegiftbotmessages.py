@@ -11,7 +11,7 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  If you would like to participate in dogegiftbot giveaways, simply click [here](%s).  
  If you want to opt-out of these giveaways, click [here](%s).  
  If you would like to see some information on the current round, click [here](%s).  
- **THIS MESSAGE IS A TEST. PLEASE DISREGARD IT.**   
+  
  --/u/dogegiftbot Team  
  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  

@@ -242,8 +242,9 @@ def check_commands():
 			print "Processing RE-ENTRY request"
 			reentree = msg.body[8:-12]
 			print reentree + " will be re-entered"
+			
+			add_winner(reentree,archived=True)
 			add_entry(reentree)
-			remove_winner(reentree)
 			msg.reply(reentree + ' has been re-entered into the drawing.')
 			r.send_message(reentree,'Re-entry','You have been re-entered into the drawing!' +m.footer  )
 			msg.mark_as_read()
@@ -252,7 +253,7 @@ def check_commands():
 		    prize = body.split("+accept ")
 		    prize = prize[1].split()[0]
 		    send_prize(auth,prize)
-		    add_winner(auth,prize,True)
+		    add_winner(auth,prize=prize,claim=True)
 		    msg.mark_as_read()
 		    
 		    
@@ -299,14 +300,13 @@ def get_winner(msg, entries):
 								print 'NOT VERIFIED'
 				time.sleep(5)
 			print winner + ' won!'
-		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link)
-										)
-		print winning_postid.id 
+		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
+		print "http://redd.it/"+winning_postid.id 
 		line_message = "An annoucement of your win has been made [here](http://redd.it/%s)   " % winning_postid.id
 		r.send_message(winner, 'Congratulations!', m.winning_message % (m.accept_link,line_message))
 
 		choose_winner = 0
-		add_winner(winner)
+		new_contest(winner)
 		remove_entry(winner)
 		return 
 		
@@ -380,9 +380,9 @@ def get_dtbinfo(Text):
 	    donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
-	submissions = r.get_subreddit('dogecoin').get_new(limit=25)
+	submissions = r.get_subreddit(subreddit_to_post).get_new(limit=25)
 	for x in submissions:
-		if x.author.name in already_won:
+		if x.author.name in banned:
 			print 'Post ID: ' + x.id 
 			id = x.id
 			submission = r.get_submission(submission_id = id)
@@ -395,6 +395,7 @@ def check_posts():
 					r.send_message(reentry_contact,'Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
 					add_post(comment.id)
 					print 'Post processed'
+					break
 
 
 
