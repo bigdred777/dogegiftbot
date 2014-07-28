@@ -20,14 +20,14 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  #winner, entry link , optout link , history link
  
         self.entry_link="http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Bentry"
-        self.optout_link = 'http://www.reddit.com/message/compose?to=dogegiftbot&subject=exit&message=%2Boptout'
+        self.optout_link = 'http://www.reddit.com/message/compose?to=dogegiftbot&subject=optout&message=%2Boptout'
         self.history_link = 'http://www.reddit.com/message/compose?to=dogegiftbot&subject=history&message=%2Bhistory'
         self.winning_message = '''You have won a dogegiftbot giveaway!   
 Reply with "+accept [name of gift-card] dogegiftbot" to claim your gift-card from [egifter.com](https://www.egifter.com/giftcards) 
 Simply go to their website and pick what company you would like your gift card from. Example, if you were to pick Amazon as your the
 card you would like for your gift. The accept command would look like this "%s Amazon " 
-If you would like to pass the gift to another random person, reply with "pass random".  
-If you would like to pass to a certain Redditor who is in the giveaway,  then reply with "+pass [name of redditor] " to pass it to a specific redditor.  
+If you would like to pass the gift to another random person, reply with "+pass random".  
+If you would like to pass to another Redditor, then reply with "+pass [name of redditor] " to pass it to a specific redditor.  
 You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.
 \n \n %s \n \n %s \n \n %s
 
