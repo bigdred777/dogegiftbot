@@ -35,7 +35,7 @@ class Entries(Base):
         return "<entries instance %s >" % (self.user)
 class Contests(Base):
     __tablename__ = "contest"
-    date = Column(String, primary_key = True)
+    date = Column(String, primary_key = True) #unix time
     winner = Column(String)
     prize = Column(String)
     prize_claimed = Column(Boolean)
@@ -86,7 +86,7 @@ def add_entry(User):
         session = create_session()
         session.add(db_add)
         session.commit()
-        print "added " + User
+        print "added entry " + User
         return 1
     else:
         search.entered = True
