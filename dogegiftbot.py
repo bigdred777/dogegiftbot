@@ -302,7 +302,7 @@ def check_commands():
 def custom_contest(entries):
             
                         winner = None
-			print "Choosing winner"
+			print "Choosing winner for custom contest"
 
 			
 			while  True:
