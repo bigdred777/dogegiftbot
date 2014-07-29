@@ -472,7 +472,12 @@ def try_contest():
     giftcost = getcost()
     print "The cost of a giftcard is %s DOGE" % giftcost
     print "the current balance is %s DOGE" % balance
+    winners = get_winners()
     if float(giftcost) <= float(balance):
+        if len(winners) > 0 and len(winners)*float(giftcost) < balance:
+            return false
+
+        
 	get_winner('moot',entries)
 	return True
 		
