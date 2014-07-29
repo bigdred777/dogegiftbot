@@ -5,73 +5,91 @@ import sys
 import urllib
 import urllib2
 import json
-import pprint
 import StringIO
+import traceback
+from dogegiftbottables import *
+import hashlib
+from dogegiftbotmessages import dogegiftbotmessages
+m = dogegiftbotmessages()
+r = praw.Reddit(user_agent='dogegiftbot version 1.1')
+
+###### config section ############
+bot_name = "dogemultisigescrow"
+#authorized admins
+authorized = ['Doomhammer458']
+#login info
+r.login()                  #leave blank for praw config
+reentry_contact = "Doomhammer458"
+subreddit_to_post = "dogetrivia"
+freq_bal_check = 10 # time in minute
+###### config section ############
+
 
 # Created by /u/PieMan2201 through bots4doge.com
+    
 
-r = praw.Reddit(user_agent='I love pizza!')
+
+bot_name = bot_name.lower()
 winner_count = 0
-r.login('dogegiftbot','')
+
 print 'LOGIN SUCCESS'
 kill_var = '321'
 winners = []
 msgcheck = 0
-global balance
+history_hash = None
 balance = 0
-for msg in r.get_unread(limit=None):
-	msg.mark_as_read()
-entries = []
-r.send_message('dogetipbot','hist','+history')
-repcount = 0
-balcheck = 12
-postcheck = 6
-first_run = 1
-done = []
-lower_body = 'bnipdsn'
-authorized = ['PieMan2201','bigdred777','TheLobstrosity']
-global authorized
-already_won = []
-winning_message = '''You have won a dogegiftbot giveaway!   
-Reply with "accept [name of gift-card] dogegiftbot" to claim a gift-card from [egifter.com](https://www.egifter.com/giftcards)  
-If you would like to pass the gift, reply with "pass random dogegiftbot" to pass it to a random person.  
-Reply with "pass [name of redditor] dogegiftbot" to pass it to a specific redditor.  
-You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.  
-%s
-^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w    
-THIS IS A TEST. PLEASE FOLLOW THE INSTRUCTIONS EVEN THOUGH YOU WILL NOT BE REWARDED.'''
-file = open('entries.txt')
-for line in file:
-	name = line.split()[0]
-	entries.append(name)
-file.close()
-file2 = open('wonners.txt')
-for line in file2:
-	name = line.split()[0]
-	already_won.append(name)
-file2.close()
-file3 = open('postids.txt')
-for line in file3:
-	name = line.split()[0]
-	done.append(name)
-file3.close()
+
+entries = get_entries()
+#r.send_message('dogetipbot','hist','+history')
+
+last_bal_check = datetime.datetime.now() - datetime.timedelta(days=5)
+
+done = get_posts()
+donors = []
+donations = []
+donor_dict = {}
+
+
+
+already_won = get_winners()
+
+
 print entries
 print already_won
 print done
 def getDonors(text):
-	text2 = text.replace('|',' ')
+        
+	text2 = text.replace('|',' ').encode("ascii","replace")
 	dict = {}
 	text3 = StringIO.StringIO(text2)
 	counter = 0
+
 	for line in text3:
-		if line.split() != [] and counter < 10:
-			if line.split()[2] != '**/u/dogegiftbot**' and '/u/' in line.split()[2] and '+' not in line.split()[2] and line.split()[1] != 'failed':
-				if line.split()[2] not in dict.keys():
-					dict[line.split()[2]] = float(line.split()[6])
-					counter += 1
-				elif line.split()[2] in dict.keys():
-					dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
-	return dict	
+	        
+	        if "**/u/"+bot_name+"**" in line:
+	           
+	            
+	            if line.split()[0] == "tip":
+	                  
+	                
+
+		    
+		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?"and counter <10:
+		         	        
+
+		         	        
+		        	if line.split()[2] not in dict.keys():
+		        		        
+		           	  dict[line.split()[2]] = float(line.split()[6])
+		           	  counter += 1
+		        	elif line.split()[2] in dict.keys():
+                                    dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+                if counter == 10:
+                    break
+                    
+	print "donors "	   
+	print dict                              
+        return dict	
 def getaddress(winner,card):
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
@@ -93,7 +111,7 @@ def savelists(entries, already_won, done):
 		list.append(mooting)
 	for x in list:
 		file.write('%s \n' % x)
-	file2 = open('wonners.txt','w')
+	file2 = open('winners.txt','w')
 	list = []
 	for x in already_won:
 		mooting = str(x)
@@ -125,93 +143,92 @@ def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
 	for msg in msgs:
+	        if type(msg) != praw.objects.Message:
+	            msg.mark_as_read()
+	            print "NEW comment reply: ",
+	            print msg
+	            continue
+	        
+	        entries = get_entries()
+	        already_won=get_winners()
+	        banned=get_banned()
 		body = msg.body.lower()
 		id = msg.id
 		auth = msg.author.name
-		if '+entry' == body:
+		if auth== "dogetipbot":
+		    print "DOGETIPBOT message"
+		    if 'here are your last' in body:
+                        get_dtbinfo(body)
+                        msg.mark_as_read()
+                        try_contest()
+                        
+		    else:
+		        msg.mark_as_read()
+		       
+		        print body
+		        print
+		        continue
+
+		
+		elif '+ent' in body:
 			print "Processing ENTRY request"
 			msg.mark_as_read()
 			user = r.get_redditor(auth)
 			comkarm = user.comment_karma
-			if int(comkarm) > 49:
-				if auth not in entries and auth not in already_won:
-					entries.append(auth)
-					msg.reply('''You have been entered into the giveaway!  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
+			linkkarm = user.link_karma
+			if int(comkarm) > 49 or int(linkkarm) > 49:
+				if auth not in entries and (auth not in already_won or auth not in banned):
+					add_entry(auth)
+					msg.reply('You have been entered into the giveaway! '+m.footer)
 					print auth + ' has entered'
 				else:
-					msg.reply('Silly shibe! You can only enter once.')
-					print auth + ' is a meatbag'
+					msg.reply('Silly shibe! You can only enter once.'+m.footer)
+					print auth + ' is a silly shibe'
 			else:
 				print auth + ' does not meet requirements'
-				msg.reply("I'm sorry, but you do not have sufficient comment karma to register. You need at least 50 comment karma to enter.")
-			print entries
+				msg.reply("I'm sorry, but you do not have sufficient comment / link karma  to register. You need at least 50 comment / link karma to enter."+m.footer)
+
+			
 			print 'Request processed'
-		elif '+optout' == body and auth in entries:
+			
+		elif '+opt'in body and auth in entries:
 			print 'Processing OPT-OUT request'
 			msg.mark_as_read()
-			entries.remove(auth)
-			msg.reply('''You have been removed from the giveaway.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
-			print entries
+			remove_entry(auth)
+			msg.reply('You have been removed from the giveaway. '+m.footer)
+			
 			print 'Request processed'
-		elif '+history' == body:
-			print "Processing HISTORY request"
-			msg.mark_as_read()
-			giftcost = getcost()
-			donors = []
-			donations = []
-			for x in donor_dict.keys():
-				donors.append(x)
-				donations.append(donor_dict[x])
-			msg.reply('''My balance is %s DOGE  
- My goal is %s DOGE  
- I need %s DOGE to reach my goal.  
- The last 10 donors are:
- 
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
- * %s - %s doge
+		elif "+his" in body or "+info" in body:
 
- To donate, you can either tip me using /u/dogetipbot,  
- or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
- If you send Dogecoin from your wallet, you will not be featured as a donor.  
- ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' % (balance,giftcost,str(float(giftcost) - float(balance)), donors[0], 
-																													donations[0], 
-																													donors[1], 
-																													donations[1], 
-																													donors[2], 
-																													donations[2], 
-																													donors[3],
-																													donations[3],
-																													donors[4],
-																													donations[4],
-																													donors[5],
-																													donations[5],
-																													donors[6],
-																													donations[6],
-																													donors[7], 
-																													donations[7],
-																													donors[8],
-																													donations[8],
-																													donors[9],
-																													donations[9]))
-			print 'Request processed'
-		elif 'exit dogegiftbot' == body and auth in authorized:
+			print "Processing HISTORY request"
+			
+			giftcost = float(getcost())
+			print_bal = float(balance)
+			while print_bal > giftcost:
+			    print_bal -= giftcost
+                        hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
+     			for x in donor_dict.keys():
+     			    hist_mes += m.history_mid % (x,donor_dict[x])
+			hist_mes += m.history_bottom % (get_todays_deposits())
+			msg.reply(hist_mes)
+ 
+                        print 'Request processed'
+			msg.mark_as_read()
+			
+		 
+		elif 'exit' in body and auth in authorized:
 			print "Processing KILL request"
 			msg.reply('Bot is shutting down')
 			global kill_var
 			kill_var = '9001'
+			msg.mark_as_read()
 			sys.exit()
-		elif 'send random dogegiftbot' == body and auth in authorized:
+			raise Exception("SHUTDOWN")
+		elif 'force send random dogegiftbot' in body and auth in authorized:
+			print 'Processing FORCED RANDOM SEND request'
+			get_winner(msg, entries)
+			
+		elif 'send random dogegiftbot' in body and auth in authorized:
 			print "Processing RANDOM SEND request"
 			giftcost = getcost()
 #			giftcost = 10
@@ -221,37 +238,137 @@ def check_commands():
 				print "BALANCE TOO LOW"
 				msg.reply('Balance too low')
 				msg.mark_as_read()		
-		elif 'force send random dogegiftbot' == body and auth in authorized:
-			print 'Processing FORCED RANDOM SEND request'
-			get_winner(msg, entries)
-		elif 'reenter' in body and 'dogegiftbot' in body:
+
+		elif 'reenter' in body and auth in authorized:
 			print "Processing RE-ENTRY request"
-			reentree = msg.body[8:-12]
+			reentree = body.split("reenter")[1].split()[0]
+			reentree = r.get_redditor(reentree).name
 			print reentree + " will be re-entered"
-			entries.append(reentree)
-			already_won.remove(reentree)
+			
+			add_winner(reentree,archived=True)
+			add_entry(reentree)
 			msg.reply(reentree + ' has been re-entered into the drawing.')
-			r.send_message(reentree,'Re-entry','''You have been re-entered into the drawing!  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
+			r.send_message(reentree,'Re-entry','You have been re-entered into the drawing!' +m.footer  )
 			msg.mark_as_read()
-			print entries
-			print 'Request processed'
-def get_winner(msg, entries):
+		elif "+custom" in body and auth in authorized:
+		    win = custom_contest(entries)
+		    reenter_link = m.reenter_link + win +")"
+		    msg.reply("%s  has won the contest! Please create a post and send them a message to work out the details of the prize. \
+\n \n  If they do not take the prize you can reenter them with the reenter command. \n\n [+reenter](%s " % (win, reenter_link )+win)
+                    msg.mark_as_read()
+                    
+
+				
+		elif '+accept' in body and auth in already_won:
+		    prize = body.split("+accept ")
+		    prize = prize[1].split()[0]
+		    send_prize(auth,prize)
+		    add_winner(auth,prize=prize,claim=True)
+		    msg.reply("prize claimed!")
+		    msg.mark_as_read()
+		    
+		elif 'pass' in body and auth in already_won:
+		    print "proccessing pass request"
+		    
+		    passed_to = body.split("pass ")[1].split()[0]
+		    if passed_to == 'random':
+		        
+		        win = get_winner(msg,entries)
+		        msg.reply("You have passed on the prize to %s" % (win) +m.footer)
+		        remove_winner(auth)
+		        
+                    else:
+                        try:
+                            p = r.get_redditor(passed_to).name
+                            get_winner(msg,entries,p)
+                            msg.reply("You have passed the prize to " + passed_to +m.footer) 
+                            remove_winner(auth)
+                    
+                        except:
+                            msg.reply("Please pick a valid redditor")
+                    
+                    msg.mark_as_read()
+                    print 'Request processed'
+
+		    
+		else:   
+		    print "Processing invalid request"
+		    msg.reply("Request not understood. Please reply with +entry, +optout or +history to have your request proccessed."+m.footer)
+		    msg.mark_as_read()
+		 
+		    print 'Request processed'
+	
+def custom_contest(entries):
+            
+                        winner = None
+			print "Choosing winner for custom contest"
+
+			
+			while  True:
+				if winner == None:    
+				    winner = random.choice(entries)
+				redditor = r.get_redditor(winner)
+				redd_comments = redditor.get_comments(limit=1)
+				redd_posts = redditor.get_submitted(limit=1)
+				print winner + ' picked'
+				verified = False
+				for x in redd_comments:
+					if time.time() - x.created_utc < 1209600:
+						verified = True
+						print 'VERIFIED'
+						break
+					else: 
+						for y in redd_posts:
+							if time.time() - y.created_utc < 1209600:
+								verified = True
+								print 'VERIFIED'
+								
+								break
+							else:
+								
+								winner = None
+								print 'NOT VERIFIED'
+								continue
+					        
+					        winner = None
+					        print 'NOT VERIFIED'
+					        continue
+				if verified == True:
+				    break
+				    
+
+								
+				time.sleep(5)
+				
+			print winner + ' won!'
+			
+		
+		        new_contest(winner)
+		        add_winner(winner,prize=None,claim=True,archived=False)
+		        remove_entry(winner)
+		        return winner
+		
+    
+def get_winner(msg, entries,winner=None):
 	choose_winner = 0
 	exit_var = 'stay alive'
-	passer = 'I am IRON MAN!'
+	if winner:
+	    verified = True
+	else:
+	    verified = False
+	       
 	while exit_var != 'exit':
 		line_message = ' '
 		if choose_winner == 0:
 			print "Choosing winner"
 			if msg != 'moot':
 				msg.mark_as_read()
-			rand = random.randrange(0,len(entries))
-			winner = entries[rand]
-			verified = False
-			while winner == passer or verified == False:
-				rand = random.randrange(0,len(entries))
-				winner = entries[rand]
+			
+			
+			
+			while  verified == False:
+				if winner == None:    
+				    winner = random.choice(entries)
 				redditor = r.get_redditor(winner)
 				redd_comments = redditor.get_comments(limit=1)
 				redd_posts = redditor.get_submitted(limit=1)
@@ -260,127 +377,82 @@ def get_winner(msg, entries):
 					if time.time() - x.created_utc < 1209600:
 						verified = True
 						print 'VERIFIED'
+						break
 					else: 
 						for y in redd_posts:
 							if time.time() - y.created_utc < 1209600:
 								verified = True
 								print 'VERIFIED'
+								break
 							else:
 								verified = False
+								winner = None
 								print 'NOT VERIFIED'
+								continue
+					        verified = False
+					        winner = None
+					        print 'NOT VERIFIED'
+					        continue
+
+								
 				time.sleep(5)
 			print winner + ' won!'
-		winning_postid = r.submit('dogebottest','[Winner] DogeGiftBot Winner!',text="""The winner is...   
- **/u/%s**! Congratulations!  
- They have been picked as the winner of this round, and have the option of selecting a $25 gift-card purchased with Dogecoin!  
- A PM has been sent to the winner with more details.  
- We would like to thank all members of the community here at /r/dogecoin. Without you, this wouldn't be possible.  
- A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Without them, this little dream would have never come true.  
- If you would like to participate in dogegiftbot giveaways, simply click [here](%s).  
- If you want to opt-out of these giveaways, click [here](%s).  
- If you would like to see some information on the current round, click [here](%s).  
- **THIS MESSAGE IS A TEST. PLEASE DISREGARD IT.**   
- --/u/dogegiftbot Team  
- 
- ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Coded ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http:\\www.bots4doge.com)   
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w""" % (winner, 
-									'http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Bentry',
-									'http://www.reddit.com/message/compose?to=dogegiftbot&subject=exit&message=%2Boptout',
-									'http://www.reddit.com/message/compose?to=dogegiftbot&subject=history&message=%2Bhistory')
-										)
-		print winning_postid.id 
+			
+		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot drawing!!'% (winner),text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
+		print "http://redd.it/"+winning_postid.id 
 		line_message = "An annoucement of your win has been made [here](http://redd.it/%s)   " % winning_postid.id
-		r.send_message(winner, 'Congratulations!', winning_message % line_message)
-		choice = 0
-		timer = 0
+		r.send_message(winner, 'Congratulations!', m.winning_message % (m.accept_link,m.accept_link,m.pass_link,line_message))
+
 		choose_winner = 0
-		while choice == 0 and timer < 8640:
-			msgs = r.get_unread(limit=None)
-			for msg in msgs:
-				if 'accept' in msg.body.lower() and 'dogegiftbot' in msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					msg.mark_as_read()
-					forward = str(msg.body.lower())[:-12]
-					forward_t = str(forward)[7:]
-					for x in authorized:
-						r.send_message(x,'Gift Card','%s chose the %s gift card' % (msg.author.name, forward_t))
-					choice = 'boo'
-					msg.reply('''You chose the %s giftcard. If you would like to be re-entered into the giveaway, please create a submission that contains a link to a picture of your giftcard.  
- Then, create a comment on that submission that contains the text `enter again dogegiftbot`.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % forward_t)
-					address = getaddress(msg.author.name,forward_t)
-					cost = getcost()
-					r.send_message('dogetipbot',forward_t + 'for' + msg.author.name, '+withdraw %s %s doge' % (address, str(cost)))
-					print address
-					if msg.author.name in entries:
-						entries.remove(msg.author.name)
-					already_won.append(msg.author.name)
-					print winner + ' has claimed the ' + forward_t + ' gift card'
-					exit_var = 'exit'
-				elif 'pass random dogegiftbot' == msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					lower_body = msg.body.lower()
-					choice = 'boo'
-					print winner + ' has passed randomly'
-					msg.reply('''The gift has been passed on.  
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''')
-					msg.mark_as_read()
-					passer = msg.author.name
-				elif 'pass' in msg.body.lower() and 'dogegiftbot' in msg.body.lower() and 'pass random dogegiftbot' not in msg.body.lower() and msg.author.name == winner and msg.was_comment == False:
-					lower_body = msg.body.lower()
-					choice = 'boo'
-					winner2 = winner
-					msg.mark_as_read()
-					choose_winner = 'not 0'
-					winner = lower_body[5:-12]
-					msg.reply('''You have passed the gift to %s    
- ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w  ''' % winner)					
-					print winner2 + ' has passed to ' + winner
-			check_commands()
-			timer += 1
-			if timer == 8640:
-				r.send_message(winner, 'Sorry!', "We regret to inform you that you're time has expired. The gift will be passed to another participant.")
-				choose_winner = 0
-			time.sleep(30)
-def get_dtbinfo():
-	global first_run
-	print "Checking balance"
-	r.send_message('dogetipbot','moot','+history')
-#	print 'sent message'
-	if first_run == 0:
-		balance_old = balance
-		text_old = text
-	else:
-		balance_old = '9001'
-		text_old = '/u/PieMan2201'
-	first_run = 0
-	balance = 0
-	text = 0
-	balance_counter = 0
-	while balance == 0 and balance_counter < 18:
-		msgs = r.get_unread()
-#		print 'moot'
-		for x in msgs:
-#			print 'moot2'
-			if x.author.name == 'dogetipbot' and 'here are your last' in x.body.lower():
-				global balance
-				balance = x.body.split()[13][2:]
-				print balance + ' DOGE'
-				x.mark_as_read()
-				text = x.body.lower()
-		balance_counter += 1
-		if balance_counter == 18:
-			print 'Time limit exceeded, balance update FAILED'
-			balance = balance_old
-			text = text_old
-		time.sleep(20)
+		new_contest(winner)
+		remove_entry(winner)
+		return winner
+		
+		
+def send_prize(Winner,prize):
+    for x in authorized:
+        r.send_message(x,'Gift Card','%s choose the %s gift card' % (Winner, prize))
+        
+
+    address = getaddress(Winner,prize)
+    cost = getcost()
+    r.send_message('dogetipbot',prize + 'for' + Winner, '+withdraw %s %s doge' % (address, str(cost)))
+    print address
+    print Winner + ' has claimed the ' + prize + ' gift card'
+    return
+        
+
+def get_dtbinfo(Text):
+	global balance
+	global history_hash
 	global donor_dict
-	global text
-	donor_dict = getDonors(text)
+	text = Text
+	print "Checking balance"
+
+				
+	balance = text.split()[13][2:]
+	   
+	print "balance: "+balance + ' DOGE'
+				
+				
+	new_history_hash = hashlib.md5(text.encode("ascii","replace")).hexdigest()
+				
+
+	
+		
+	
+	if new_history_hash == history_hash:
+	    print "no new tips"
+	    return
+	else:
+	    history_hash = new_history_hash
+	    add_history_to_db(text,bot_name)
+	    donor_dict = getDonors(text)
 def check_posts():
 	print "Checking posts"
-	submissions = r.get_subreddit('dogecoin').get_new(limit=25)
+	submissions = r.get_subreddit(subreddit_to_post).get_new(limit=25)
 	for x in submissions:
-		if x.author.name in already_won:
+		if x.author.name in banned:
 			print 'Post ID: ' + x.id 
 			id = x.id
 			submission = r.get_submission(submission_id = id)
@@ -390,48 +462,71 @@ def check_posts():
 					print 'Comment ID: ' + comment.id
 					print 'Processing RE-ENTRY post'
 					link = 'http://redd.it/' + x.id
-					r.send_message('PieMan2201','Request for re-entry','%s has requested re-entry in [this](%s) post.' % (comment.author.name, link))
-					done.append(comment.id)
+					r.send_message(reentry_contact,'Request for re-entry','%s has requested re-entry in [this](%s) post \n\n' % (comment.author.name, link)\
+					+"[+reenter]("+m.reenter_link+comment.author.name+")")
+					add_post(comment.id)
 					print 'Post processed'
+					break
+
+def try_contest():
+    giftcost = getcost()
+    print "The cost of a giftcard is %s DOGE" % giftcost
+    print "the current balance is %s DOGE" % balance
+    if float(giftcost) <= float(balance):
+	get_winner('moot',entries)
+	return True
+		
+			
+    else:
+	print "Balance too low"
+	return False
+
+#bot loop
+
 while True: 
-	try: 
-		print 'A giftcard costs ' + str(getcost()) + ' doge' 
-		if repcount < 120:
-			if balcheck == 12:
-				get_dtbinfo()
-				balcheck = 0
-			if postcheck == 6:
-				check_posts()
-				postcheck = 0
-			if msgcheck == 0:
-				check_commands()
-				savelists(entries, already_won, done)
-				msgcheck = 0
-			balcheck += 1
-			repcount += 1
-			postcheck += 1
-			print 'bal: ' + str(balcheck)
-			print 'rep: ' + str(repcount)
-			print 'pos: ' + str(postcheck)
-			time.sleep(30)
-		elif repcount >= 120:
-			giftcost = getcost()
-#			giftcost = 10
-			print "The cost of a giftcard is %s DOGE" % giftcost
-			print "the current balance is %s DOGE" % balance
-			if float(giftcost) <= float(balance):
-				get_winner('moot',entries)
-				repcount = 0
-			elif float(giftcost) > float(balance):
-				print "Balance too low"
-				repcount = 0
-	except KeyboardInterrupt:
-		savelists(entries, already_won, done)
-		sys.exit()
-	except:
-		print sys.exc_info()
-		print 'Please send the above information to the author of this program'
-		savelists(entries, already_won, done)
-		if kill_var == '9001':
-			sys.exit()
-		continue 
+    try:
+        
+        already_won = get_winners()
+	entries = get_entries()
+	done = get_posts()
+	banned = get_banned()
+	print "entries"
+	print entries
+	if len(already_won)>0:
+	   print "winners"
+	   print already_won
+	if len(banned)>0:
+	   print "Waiting for reentry"
+	   print banned
+
+
+	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
+	   print "Sending history request to dogetipbot"
+	   r.send_message('dogetipbot','hist','+history')
+	   last_bal_check = datetime.datetime.now()
+	   if len(banned) > 0:
+	       check_posts()
+
+	
+
+	check_commands()
+	savelists(entries, already_won, done)
+	print 'last balance / post  check: ',
+	print last_bal_check
+
+	time.sleep(30)
+
+    except KeyboardInterrupt:
+ 	savelists(entries, already_won, done)
+ 	sys.exit()
+    except:
+ 	savelists(entries, already_won, done)
+ 	if kill_var == '9001':
+ 	      while True:
+ 	          sys.exit()
+ 	          time.sleep(20)
+ 	print "exception traceback"
+ 	traceback.print_exc() 
+ 	print 'Please send the above information to the author of this program'
+ 	time.sleep(10)
+ 	continue 
