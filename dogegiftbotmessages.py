@@ -1,6 +1,6 @@
 class dogegiftbotmessages():
     def __init__(self):
-        self.footer = " \n \n ^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w"
+        self.footer = " \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
         self.win_post = """The winner is...   
  **/u/%s**! Congratulations!  
  You are the winner of this round of a $25 gift-card purchased with Dogecoin!  

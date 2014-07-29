@@ -22,6 +22,7 @@ r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
 freq_bal_check = 10 # time in minute
+
 ###### config section ############
 
 
@@ -266,6 +267,7 @@ def check_commands():
 		    add_winner(auth,prize=prize,claim=True)
 		    msg.reply("prize claimed!")
 		    msg.mark_as_read()
+
 		    
 		elif 'pass' in body and auth in already_won:
 		    print "proccessing pass request"
@@ -472,7 +474,11 @@ def try_contest():
     giftcost = getcost()
     print "The cost of a giftcard is %s DOGE" % giftcost
     print "the current balance is %s DOGE" % balance
-    if float(giftcost) <= float(balance):
+    winners = get_winners()
+    if (len(winners)+1)*float(giftcost) <= float(balance):
+
+
+        
 	get_winner('moot',entries)
 	return True
 		
