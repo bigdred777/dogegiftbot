@@ -41,15 +41,14 @@ balance = 0
 
 entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
-repcount = 0
+
 last_bal_check = datetime.datetime.now() - datetime.timedelta(days=5)
-postcheck = 0
-first_run = 1
+
 done = get_posts()
 donors = []
 donations = []
 donor_dict = {}
-lower_body = 'bnipdsn'
+
 
 
 already_won = get_winners()
@@ -161,6 +160,8 @@ def check_commands():
 		    if 'here are your last' in body:
                         get_dtbinfo(body)
                         msg.mark_as_read()
+                        try_contest()
+                        
 		    else:
 		        msg.mark_as_read()
 		       
@@ -469,7 +470,18 @@ def check_posts():
 					print 'Post processed'
 					break
 
-
+def try_contest():
+    giftcost = getcost()
+    print "The cost of a giftcard is %s DOGE" % giftcost
+    print "the current balance is %s DOGE" % balance
+    if float(giftcost) <= float(balance):
+	get_winner('moot',entries)
+	return True
+		
+			
+    else:
+	print "Balance too low"
+	return False
 
 #bot loop
 
@@ -486,45 +498,26 @@ while True:
 	   print "winners"
 	   print already_won
 	if len(banned)>0:
-	   print "Waiting for rentry"
+	   print "Waiting for reentry"
 	   print banned
 
-	print 'A giftcard costs ' + str(getcost()) + ' doge' 
+
 	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
 	   print "Sending history request to dogetipbot"
 	   r.send_message('dogetipbot','hist','+history')
 	   last_bal_check = datetime.datetime.now()
+	   if len(banned) > 0:
+	       check_posts()
 
 	
-	if repcount < 120:
-		if postcheck == 6:
-			check_posts()
-			postcheck = 0
-			
-		if msgcheck == 0:
-			check_commands()
-			savelists(entries, already_won, done)
-			msgcheck = 0
-		
-		
-		repcount += 1
-		postcheck += 1
-		print 'last balance check: ',
-		print last_bal_check
-		print 'rep: ' + str(repcount)
-		print 'pos: ' + str(postcheck)
-		time.sleep(30)
-	elif repcount >= 120:
-		giftcost = getcost()
-#		giftcost = 10
-		print "The cost of a giftcard is %s DOGE" % giftcost
-		print "the current balance is %s DOGE" % balance
-		if float(giftcost) <= float(balance):
-			get_winner('moot',entries)
-			repcount = 0
-		elif float(giftcost) > float(balance):
-			print "Balance too low"
-			repcount = 0
+
+	check_commands()
+	savelists(entries, already_won, done)
+	print 'last balance / post  check: ',
+	print last_bal_check
+
+	time.sleep(30)
+
     except KeyboardInterrupt:
  	savelists(entries, already_won, done)
  	sys.exit()
