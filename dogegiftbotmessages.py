@@ -37,8 +37,9 @@ You have 72 hours (3 days) to reply to this message. If you have not replied by 
         self.pass_link = " [+pass](http://www.reddit.com/message/compose?to=dogegiftbot&subject=pass&message=%2Bpass%20RANDOM)"
         self.history_top = '''My balance is %s DOGE  
  My goal is %s DOGE  
- I need %s DOGE to reach my goal.  
- The last %i donors are:
+ I need %s DOGE to reach my goal. 
+ \nThere are %i entries. 
+ \nThe last %i donors are:
 '''
         # balance, cost, balance-cost, len (donors)
         self.history_mid = '\n * %s - %s doge'

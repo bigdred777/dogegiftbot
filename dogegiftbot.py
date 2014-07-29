@@ -199,16 +199,14 @@ def check_commands():
 			
 			print 'Request processed'
 		elif '+his' in body:
-		        if auth == "dogetipbot":
-		            msg.mark_as_read()
-		            continue
+
 			print "Processing HISTORY request"
 			
 			giftcost = float(getcost())
 			print_bal = float(balance)
 			while print_bal > giftcost:
 			    print_bal -= giftcost
-                        hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(donor_dict))
+                        hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
      			    hist_mes += m.history_mid % (x,donor_dict[x])
 			hist_mes += m.history_bottom 
