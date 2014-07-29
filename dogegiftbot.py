@@ -156,7 +156,7 @@ def check_commands():
 		id = msg.id
 		auth = msg.author.name
 		if auth== "dogetipbot":
-		    print "dogetipbot message"
+		    print "DOGETIPBOT message"
 		    if 'here are your last' in body:
                         get_dtbinfo(body)
                         msg.mark_as_read()
@@ -198,7 +198,7 @@ def check_commands():
 			msg.reply('You have been removed from the giveaway. '+m.footer)
 			
 			print 'Request processed'
-		elif '+his' in body:
+		elif "+his" in body or "+info" in body:
 
 			print "Processing HISTORY request"
 			
@@ -209,7 +209,7 @@ def check_commands():
                         hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
      			    hist_mes += m.history_mid % (x,donor_dict[x])
-			hist_mes += m.history_bottom 
+			hist_mes += m.history_bottom % (get_todays_deposits())
 			msg.reply(hist_mes)
  
                         print 'Request processed'

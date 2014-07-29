@@ -126,7 +126,12 @@ def add_post(Post):
     print "added post " + Post
     return 1
     
-
+def convert_date(date):
+    format = "%Y-%m-%d"
+    datetime_ob = datetime.datetime.strptime(date,format)
+    print int(datetime_ob.year),int(datetime_ob.month),int(datetime_ob.day)
+    date_ob = datetime.date(int(datetime_ob.year),int(datetime_ob.month),int(datetime_ob.day))
+    return date_ob
 def get_winners():
 
     session = create_session()
@@ -280,6 +285,14 @@ def add_history_to_db(tip_bot_text,bot_name):
     session.commit()
     return
     
-
+def get_todays_deposits():
+    session = create_session()
+    deposit = session.query(Transactions)\
+    .filter(Transactions.date == str(datetime.date.today()),Transactions.tx_type == "deposit").first()
+    session.close()
+    if deposit == None:
+        return 0.0
+    return deposit.amount
+    
         
     

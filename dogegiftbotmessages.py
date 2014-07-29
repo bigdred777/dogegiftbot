@@ -46,9 +46,10 @@ You have 72 hours (3 days) to reply to this message. If you have not replied by 
         #donor, donation
         
         self.history_bottom = '''\n\n
- To donate, you can either tip me using /u/dogetipbot,  
- or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
- If you send Dogecoin from your wallet, you will not be featured as a donor.  
- ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' +self.footer
+Anonymous donations have contributed %.2f doge today.\n
+To donate, you can either tip me using /u/dogetipbot,  
+or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
+If you send Dogecoin from your wallet, you will not be featured as a donor.  
+^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
+^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' +self.footer
         self.reenter_link =  'http://www.reddit.com/message/compose?to=dogegiftbot&subject=reenter&message=%2Breenter%20'
