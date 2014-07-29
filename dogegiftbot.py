@@ -400,7 +400,7 @@ def get_winner(msg, entries,winner=None):
 				time.sleep(5)
 			print winner + ' won!'
 			
-		winning_postid = r.submit(subreddit_to_post,'[Winner] DogeGiftBot Winner!',text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
+		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot drawing!!'% (winner),text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
 		print "http://redd.it/"+winning_postid.id 
 		line_message = "An annoucement of your win has been made [here](http://redd.it/%s)   " % winning_postid.id
 		r.send_message(winner, 'Congratulations!', m.winning_message % (m.accept_link,m.accept_link,m.pass_link,line_message))
