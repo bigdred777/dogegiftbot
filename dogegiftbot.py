@@ -75,7 +75,7 @@ def getDonors(text):
 	                
 
 		    
-		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?"and counter <10:
+		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?" and counter <10:
 		         	        
 
 		         	        
@@ -471,6 +471,7 @@ def check_posts():
 					break
 
 def try_contest():
+    
     giftcost = getcost()
     print "The cost of a giftcard is %s DOGE" % giftcost
     print "the current balance is %s DOGE" % balance
@@ -479,7 +480,8 @@ def try_contest():
 
 
         
-	get_winner('moot',entries)
+	for person in authorized:
+	    r.send_message(person,"balance is high enough for a contest","balance is high enough for a contest")
 	return True
 		
 			
