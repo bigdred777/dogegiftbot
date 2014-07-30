@@ -181,7 +181,7 @@ def check_commands():
 			comkarm = user.comment_karma
 			linkkarm = user.link_karma
 			if int(comkarm) > 49 or int(linkkarm) > 49:
-				if auth not in entries and (auth not in already_won or auth not in banned):
+				if auth not in entries and auth not in already_won and auth not in banned:
 					add_entry(auth)
 					msg.reply('You have been entered into the giveaway! '+m.footer)
 					print auth + ' has entered'
