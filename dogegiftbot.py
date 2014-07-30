@@ -22,6 +22,7 @@ r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
 freq_bal_check = 10 # time in minute
+contest_freq = 5 
 
 ###### config section ############
 
@@ -44,7 +45,8 @@ entries = get_entries()
 #r.send_message('dogetipbot','hist','+history')
 
 last_bal_check = datetime.datetime.now() - datetime.timedelta(days=5)
-
+last_con_check = datetime.datetime.now() - datetime.timedelta(days=5)
+last_his_succ =  datetime.datetime.now() - datetime.timedelta(days=5)
 done = get_posts()
 donors = []
 donations = []
@@ -144,6 +146,7 @@ def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
 	for msg in msgs:
+	        global balance
 	        if type(msg) != praw.objects.Message:
 	            msg.mark_as_read()
 	            print "NEW comment reply: ",
@@ -154,19 +157,19 @@ def check_commands():
 	        already_won=get_winners()
 	        banned=get_banned()
 		body = msg.body.lower()
-		id = msg.id
 		auth = msg.author.name
 		if auth== "dogetipbot":
 		    print "DOGETIPBOT message"
 		    if 'here are your last' in body:
                         get_dtbinfo(body)
                         msg.mark_as_read()
-                        try_contest()
+                        global last_his_succ
+                        last_his_succ = datetime.datetime.now()
                         
 		    else:
 		        msg.mark_as_read()
 		       
-		        print body
+		        print body.replace('|',' ').encode("ascii","replace")
 		        print
 		        continue
 
@@ -261,12 +264,15 @@ def check_commands():
 
 				
 		elif '+accept' in body and auth in already_won:
+		    msg.mark_as_read()
 		    prize = body.split("+accept ")
 		    prize = prize[1].split()[0]
 		    send_prize(auth,prize)
 		    add_winner(auth,prize=prize,claim=True)
 		    msg.reply("prize claimed!")
-		    msg.mark_as_read()
+		    global last_con_check
+		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
+		    balance = 0.0
 
 		    
 		elif 'pass' in body and auth in already_won:
@@ -445,11 +451,12 @@ def get_dtbinfo(Text):
 	
 	if new_history_hash == history_hash:
 	    print "no new tips"
-	    return
+	
 	else:
 	    history_hash = new_history_hash
 	    add_history_to_db(text,bot_name)
 	    donor_dict = getDonors(text)
+	return balance
 def check_posts():
 	print "Checking posts"
 	submissions = r.get_subreddit(subreddit_to_post).get_new(limit=25)
@@ -476,12 +483,10 @@ def try_contest():
     print "The cost of a giftcard is %s DOGE" % giftcost
     print "the current balance is %s DOGE" % balance
     winners = get_winners()
+
     if (len(winners)+1)*float(giftcost) <= float(balance):
 
-
-        
-	for person in authorized:
-	    r.send_message(person,"balance is high enough for a contest","balance is high enough for a contest")
+        get_winner("moot",entries)
 	return True
 		
 			
@@ -515,13 +520,23 @@ while True:
 	   if len(banned) > 0:
 	       check_posts()
 
-	
+	if datetime.datetime.now() - last_con_check > datetime.timedelta(minutes = contest_freq) and \
+	datetime.datetime.now() - last_his_succ < datetime.timedelta(minutes = freq_bal_check):
+	    
+	    last_con_check = datetime.datetime.now()
+	    try_contest()
+	    
+	    
 
 	check_commands()
 	savelists(entries, already_won, done)
 	print 'last balance / post  check: ',
+	
 	print last_bal_check
-
+	
+	print "next contest check: ",
+	print last_con_check + datetime.timedelta(minutes=contest_freq)
+        print 
 	time.sleep(30)
 
     except KeyboardInterrupt:
