@@ -220,7 +220,7 @@ def check_commands():
 			msg.mark_as_read()
 			
 		 
-		elif 'exit' in body and auth in authorized:
+		elif '+exit' in body and auth in authorized:
 			print "Processing KILL request"
 			msg.reply('Bot is shutting down')
 			global kill_var
@@ -228,11 +228,11 @@ def check_commands():
 			msg.mark_as_read()
 			sys.exit()
 			raise Exception("SHUTDOWN")
-		elif 'force send random dogegiftbot' in body and auth in authorized:
+		elif '+force' in body and auth in authorized:
 			print 'Processing FORCED RANDOM SEND request'
 			get_winner(msg, entries)
 			
-		elif 'send random dogegiftbot' in body and auth in authorized:
+		elif '+random' in body and auth in authorized:
 			print "Processing RANDOM SEND request"
 			giftcost = getcost()
 #			giftcost = 10
@@ -243,7 +243,7 @@ def check_commands():
 				msg.reply('Balance too low')
 				msg.mark_as_read()		
 
-		elif 'reenter' in body and auth in authorized:
+		elif '+reenter' in body and auth in authorized:
 			print "Processing RE-ENTRY request"
 			reentree = body.split("reenter")[1].split()[0]
 			reentree = r.get_redditor(reentree).name
@@ -267,15 +267,15 @@ def check_commands():
 		    msg.mark_as_read()
 		    prize = body.split("+accept ")
 		    prize = prize[1].split()[0]
-		    send_prize(auth,prize)
 		    add_winner(auth,prize=prize,claim=True)
+		    send_prize(auth,prize)
 		    msg.reply("prize claimed!")
 		    global last_con_check
 		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
 		    balance = 0.0
 
 		    
-		elif 'pass' in body and auth in already_won:
+		elif '+pass' in body and auth in already_won:
 		    print "proccessing pass request"
 		    
 		    passed_to = body.split("pass ")[1].split()[0]
