@@ -235,7 +235,6 @@ def check_commands():
 		elif '+random' in body and auth in authorized:
 			print "Processing RANDOM SEND request"
 			giftcost = getcost()
-#			giftcost = 10
 			if float(balance) >= float(giftcost):
 				get_winner(msg,entries)
 			elif float(balance) < float(giftcost):
