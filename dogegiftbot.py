@@ -10,6 +10,7 @@ import traceback
 from dogegiftbottables import *
 import hashlib
 from dogegiftbotmessages import dogegiftbotmessages
+import requests
 m = dogegiftbotmessages()
 r = praw.Reddit(user_agent='dogegiftbot version 1.1')
 
@@ -134,14 +135,16 @@ def savelists(entries, already_won, done):
 	file2.close()
 	file3.close()
 def getcost():
-	f = urllib.urlopen('http://www.coinmill.com/USD_XDG.html')
-	s = f.read()
-	for x in s.split():
-		if '1.00' == x:
-			index = s.split().index(x) 
-			cost = int(s.split()[index + 2]) * 26
-			cost_two = cost + 100
-	return cost_two
+	status_code = 404
+	while status_code != 200:
+           	f = requests.get('https://x.g0cn.com/prices')
+           	status_code = f.status_code
+           	price_dict = f.json()
+           	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
+           	cost = xdg_price * 26
+           	cost_two = cost + 100
+        return cost_two
+           	
 def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
