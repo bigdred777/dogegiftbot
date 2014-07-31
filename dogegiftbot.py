@@ -67,7 +67,7 @@ def getDonors(text):
 	dict = {}
 	text3 = StringIO.StringIO(text2)
 	counter = 0
-
+        anon_count = 0
 	for line in text3:
 	        
 	        if "**/u/"+bot_name+"**" in line:
@@ -88,6 +88,12 @@ def getDonors(text):
 		           	  counter += 1
 		        	elif line.split()[2] in dict.keys():
                                     dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+                                    
+                    elif line.split()[0] == "d":
+                        anon_count+=1
+                        dict["anonymous "+str(anon_count)] = float(line.split()[6])
+                        counter+=1
+                        
                 if counter == 10:
                     break
                     
@@ -555,4 +561,3 @@ while True:
  	print 'Please send the above information to the author of this program'
  	time.sleep(10)
  	continue 
-+opt
