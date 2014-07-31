@@ -221,7 +221,7 @@ def check_commands():
 			    print_bal -= giftcost
                         hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
-     			    hist_mes += m.history_mid % (x,donor_dict[x])
+     			    hist_mes += m.history_mid % (x.split()[0],donor_dict[x])
 			hist_mes += m.history_bottom % (get_todays_deposits())
 			msg.reply(hist_mes)
  
