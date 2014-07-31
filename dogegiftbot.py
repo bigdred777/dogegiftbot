@@ -555,4 +555,3 @@ while True:
  	print 'Please send the above information to the author of this program'
  	time.sleep(10)
  	continue 
-+opt
