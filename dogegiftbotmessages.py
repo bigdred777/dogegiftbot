@@ -24,8 +24,8 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
         self.history_link = 'http://www.reddit.com/message/compose?to=dogegiftbot&subject=history&message=%2Bhistory'
         self.winning_message = '''You have won a dogegiftbot giveaway!   
 Reply with "+accept [name of gift-card] dogegiftbot" to claim your gift-card from [egifter.com](https://www.egifter.com/giftcards) 
-Simply go to their website and pick what company you would like your gift card from. Example, if you were to pick Amazon as your the
-card you would like for your gift. The accept command would look like this "%s Amazon " 
+Simply go to their website and pick what company you would like your gift card from. Example, if you were to pick Amazon as your card that
+you would like for your gift then the accept command would look like this "%s Amazon " 
 Once you send the accept command it can take a few minutes to get your card sent to your PM. If it does not come within
 an hour then contact /u/bigdred777 or /u/TheLobstrosity so that we can get in touch with www.egifter.com.
 If you would like to pass the gift to another random person, reply with "+pass random".  
@@ -52,7 +52,7 @@ Anonymous donations have contributed %.2f doge today.\n
 There has been a total of %i winners.\n
 To donate, you can either tip me using /u/dogetipbot,  
 or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
-If you send Dogecoin from your wallet, you will not be featured as a donor.  
+If you send Dogecoin from your wallet your name will show up as "anonymous".  
 ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
 
 ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' 
