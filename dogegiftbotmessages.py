@@ -52,7 +52,7 @@ Anonymous donations have contributed %.2f doge today.\n
 There has been a total of %i winners.\n
 To donate, you can either tip me using /u/dogetipbot,  
 or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
-If you send Dogecoin from your wallet, you will not be featured as a donor.  
+If you send Dogecoin from your wallet your name will show up as "anonymous".  
 ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
 
 ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' 
