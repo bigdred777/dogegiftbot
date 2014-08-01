@@ -293,6 +293,20 @@ def get_todays_deposits():
     if deposit == None:
         return 0.0
     return deposit.amount
+def get_all_winners():
     
+    session = create_session()
+    all_winners = session.query(Contests).all()
+    session.close()
+
+    winners = []
+    for item in all_winners:
+        winners.append(item.winner)
+    return winners    
+def count_winners():
+    session = create_session()
+    count = session.query(Contests).count()
+    session.close()
+    return count
         
     
