@@ -26,6 +26,8 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
 Reply with "+accept [name of gift-card] dogegiftbot" to claim your gift-card from [egifter.com](https://www.egifter.com/giftcards) 
 Simply go to their website and pick what company you would like your gift card from. Example, if you were to pick Amazon as your the
 card you would like for your gift. The accept command would look like this "%s Amazon " 
+Once you send the accept command it can take a few minutes to get your card sent to your PM. If it does not come within
+an hour then contact /u/bigdred777 or /u/TheLobstrosity so that we can get in touch with www.egifter.com.
 If you would like to pass the gift to another random person, reply with "+pass random".  
 If you would like to pass to another Redditor, then reply with "+pass [name of redditor] " to pass it to a specific redditor.  
 You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.
@@ -52,5 +54,10 @@ To donate, you can either tip me using /u/dogetipbot,
 or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.  
 If you send Dogecoin from your wallet, you will not be featured as a donor.  
 ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
+
 ^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' 
         self.reenter_link =  'http://www.reddit.com/message/compose?to=dogegiftbot&subject=reenter&message=%2Breenter%20'
+        
+        
+
+
