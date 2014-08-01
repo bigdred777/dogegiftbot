@@ -222,7 +222,7 @@ def check_commands():
                         hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
      			    hist_mes += m.history_mid % (x.split()[0],donor_dict[x])
-			hist_mes += m.history_bottom % (get_todays_deposits())
+			hist_mes += m.history_bottom % (get_todays_deposits(),count_winners())
 			msg.reply(hist_mes)
  
                         print 'Request processed'
@@ -432,7 +432,7 @@ def send_prize(Winner,prize):
 
     address = getaddress(Winner,prize)
     cost = getcost()
-    r.send_message('dogetipbot',prize + 'for' + Winner, '+withdraw %s %s doge' % (address, str(cost)))
+    r.send_message('dogetipbot',prize + ' for ' + Winner, '+withdraw %s %s doge' % (address, str(cost)))
     print address
     print Winner + ' has claimed the ' + prize + ' gift card'
     return
