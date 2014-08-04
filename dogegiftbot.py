@@ -217,8 +217,14 @@ def check_commands():
 			
 			giftcost = float(getcost())
 			print_bal = float(balance)
-			while print_bal > giftcost:
-			    print_bal -= giftcost
+
+			if float(balance) < (len(winners)+1.0)*giftcost:
+			    print "BALANCE TOO LOW TO PAY FOR GIFTS"
+			    print_bal = float(balance) - (len(winners)+1)*giftcost
+			else:
+                            while print_bal > giftcost:
+                                print_bal -= giftcost
+                                
                         hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
      			    hist_mes += m.history_mid % (x.split()[0],donor_dict[x])
@@ -272,16 +278,20 @@ def check_commands():
 
 				
 		elif '+accept' in body and auth in already_won:
-		    msg.mark_as_read()
-		    prize = body.split("+accept ")
-		    prize = prize[1].split()[0]
-		    add_winner(auth,prize=prize,claim=True)
-		    send_prize(auth,prize)
-		    msg.reply("prize claimed!")
-		    global last_con_check
-		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
-		    balance = 0.0
-
+		    if float(balance) > float(getcost()):
+          		    msg.mark_as_read()
+          		    prize = body.split("+accept ")
+          		    prize = prize[1].split()[0]
+          		    add_winner(auth,prize=prize,claim=True)
+          		    send_prize(auth,prize)
+          		    
+          		    msg.reply("prize claimed!")
+          		    global last_con_check
+          		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
+          		    balance = 0.0
+                    else:
+                        
+                        print "\n\nBALANCE TOO LOW TO FILL PRIZE OBLIGATIONS!!!!!!!\n\n"
 		    
 		elif '+pass' in body and auth in already_won:
 		    print "proccessing pass request"
@@ -533,6 +543,9 @@ while True:
 	    
 	    last_con_check = datetime.datetime.now()
 	    try_contest()
+	    removed_winner = timeout_winners()
+	    if removed_winner:
+	       r.send_message(removed_winner,"Prize Expired", m.timeout_message)
 	    
 	    
 
