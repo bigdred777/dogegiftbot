@@ -217,8 +217,7 @@ def check_commands():
 			
 			giftcost = float(getcost())
 			print_bal = float(balance)
-			print balance
-			print (len(winners)+1)*giftcost
+
 			if float(balance) < (len(winners)+1.0)*giftcost:
 			    print "BALANCE TOO LOW TO PAY FOR GIFTS"
 			    print_bal = float(balance) - (len(winners)+1)*giftcost
@@ -279,16 +278,20 @@ def check_commands():
 
 				
 		elif '+accept' in body and auth in already_won:
-		    msg.mark_as_read()
-		    prize = body.split("+accept ")
-		    prize = prize[1].split()[0]
-		    add_winner(auth,prize=prize,claim=True)
-		    send_prize(auth,prize)
-		    msg.reply("prize claimed!")
-		    global last_con_check
-		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
-		    balance = 0.0
-
+		    if float(balance) > float(getcost()):
+          		    msg.mark_as_read()
+          		    prize = body.split("+accept ")
+          		    prize = prize[1].split()[0]
+          		    add_winner(auth,prize=prize,claim=True)
+          		    send_prize(auth,prize)
+          		    
+          		    msg.reply("prize claimed!")
+          		    global last_con_check
+          		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
+          		    balance = 0.0
+                    else:
+                        
+                        print "\n\nBALANCE TOO LOW TO FILL PRIZE OBLIGATIONS!!!!!!!\n\n"
 		    
 		elif '+pass' in body and auth in already_won:
 		    print "proccessing pass request"
