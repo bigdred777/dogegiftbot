@@ -218,7 +218,7 @@ def check_commands():
 			giftcost = float(getcost())
 			print_bal = float(balance)
 
-			if float(balance) < (len(winners)+1.0)*giftcost:
+			if float(balance) < (len(winners)+1.0)*giftcost and len(winners) > 0:
 			    print "BALANCE TOO LOW TO PAY FOR GIFTS"
 			    print_bal = float(balance) - (len(winners)+1)*giftcost
 			else:
