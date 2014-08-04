@@ -308,5 +308,19 @@ def count_winners():
     count = session.query(Contests).count()
     session.close()
     return count
+def timeout_winners():
+    session = create_session()
+    all_winners = session.query(Contests).filter(Contests.prize_claimed==False,Contests.archived==False).all()
+    for winner in all_winners:
+        date = fromTStamp(winner.date)
+        if datetime.datetime.utcnow() - date > datetime.timedelta(days=3):
+            print winner.winner,
+            print " has timed out"
+            session.delete(winner)
+            session.commit()
+            return winner.winner
+            
+    return None
+    
         
     

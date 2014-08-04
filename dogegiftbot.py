@@ -217,8 +217,15 @@ def check_commands():
 			
 			giftcost = float(getcost())
 			print_bal = float(balance)
-			while print_bal > giftcost:
-			    print_bal -= giftcost
+			print balance
+			print (len(winners)+1)*giftcost
+			if float(balance) < (len(winners)+1.0)*giftcost:
+			    print "BALANCE TOO LOW TO PAY FOR GIFTS"
+			    print_bal = float(balance) - (len(winners)+1)*giftcost
+			else:
+                            while print_bal > giftcost:
+                                print_bal -= giftcost
+                                
                         hist_mes = m.history_top % (str(print_bal),str(giftcost),str(abs(float(giftcost) - float(print_bal))),len(entries),len(donor_dict))
      			for x in donor_dict.keys():
      			    hist_mes += m.history_mid % (x.split()[0],donor_dict[x])
@@ -533,6 +540,9 @@ while True:
 	    
 	    last_con_check = datetime.datetime.now()
 	    try_contest()
+	    removed_winner = timeout_winners()
+	    if removed_winner:
+	       r.send_message(removed_winner,"Prize Expired", m.timeout_message)
 	    
 	    
 

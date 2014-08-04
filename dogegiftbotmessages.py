@@ -59,5 +59,9 @@ If you send Dogecoin from your wallet your name will show up as "anonymous".
         self.reenter_link =  'http://www.reddit.com/message/compose?to=dogegiftbot&subject=reenter&message=%2Breenter%20'
         
         
+        self.timeout_message = "Your prize has expired and will be passed to another entrant.  \n\n \
+you can renter with the following link \n\n [+entry](%s)" % (self.entry_link)
+        
+        
 
 
