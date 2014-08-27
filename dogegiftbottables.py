@@ -40,6 +40,24 @@ class Contests(Base):
     prize = Column(String)
     prize_claimed = Column(Boolean)
     archived = Column(Boolean)
+    
+    def __cmp__(self,other):
+        if type(self) == None or type(other) == "NoneType":
+            return -1
+        s = fromTStamp(self.date)
+        o = fromTStamp(other.date)
+        if s == o:
+            return 0
+        elif s > o:
+            return -1
+        else: 
+            return 1
+class Balance(Base):
+    __tablename__ = "balance"
+    balance_id =  Column(String, primary_key = True)
+    balance = Column(Float)
+    cost = Column(Float)
+    needed = Column(Float)
  
     
 class Posts(Base):
@@ -55,6 +73,18 @@ class Transactions(Base):
     address = Column(String)
     def __repr__(self):
         return "<type: %s donor: %s amount: %.2f >" % (self.tx_type,self.donor,self.amount)
+
+    def __cmp__(self, other):
+        if type(self) == None or type(other) == None:
+            return -1
+        if self.date == other.date:
+            return 0
+        elif self.date > other.date:
+            return -1
+        else:
+            return 1
+
+
 
 def create_session():
     """
@@ -92,7 +122,15 @@ def add_entry(User):
         search.entered = True
         session.add(search)
         session.commit()
+def find_entry(User):
+    session = create_session()
     
+    search = session.query(Entries).filter(Entries.user==User).first()
+    if search == None:
+        return None
+    else:
+        return search
+        
 def remove_entry(User):
     session = create_session()
     
@@ -164,7 +202,7 @@ def new_contest(Winner):
 def add_winner(Winner,prize=None,claim=False,archived=False):
     session = create_session()
     search= session.query(Contests).filter(Contests.winner==Winner,Contests.archived==False).first()
-    if search != None:
+    if search:
         if archived == True:
 
             search.archived = archived
@@ -252,34 +290,40 @@ def add_history_to_db(tip_bot_text,bot_name):
         donor = item.split()[0]
         date = item.split()[1]
         search = session.query(Transactions).filter(Transactions.donor == donor,Transactions.date == date).first()
-        if search == None:
-            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "tip",amount=tips[item]))
-        else:
+        if search:
             if search.amount < tips[item]:  
                 search.amount = tips[item]
                 session.add(search)
+            
+        else:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "tip",amount=tips[item]))
+
     for item in d.keys():
         donor = "anonymous deposit"
         date = item
         search = session.query(Transactions).filter(Transactions.donor == donor,Transactions.date == date).first()
-        if search == None:
-            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "deposit",amount=d[item]))
-        else:
+        if search:
             if search.amount < d[item]:  
                 search.amount = d[item]
                 session.add(search)
+            
+        else:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "deposit",amount=d[item]))
+
     for item in w.keys():
         donor = "withdraw"
         date = item.split()[0]
         address = item.split()[1]
         search = session.query(Transactions)\
         .filter(Transactions.donor == donor,Transactions.date == date, Transactions.address==address).first()
-        if search == None:
-            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "withdraw",amount=w[item],address=address))
-        else:
+        if search:
             if search.amount < w[item]:  
                 search.amount = w[item]
-                session.add(search)
+                session.add(search)            
+        else:
+            session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "withdraw",amount=w[item],address=address))
+
+
         
     
     session.commit()
@@ -290,9 +334,10 @@ def get_todays_deposits():
     deposit = session.query(Transactions)\
     .filter(Transactions.date == str(datetime.date.today()),Transactions.tx_type == "deposit").first()
     session.close()
-    if deposit == None:
+    if deposit:
+        return deposit.amount
+    else:
         return 0.0
-    return deposit.amount
 def get_all_winners():
     
     session = create_session()
@@ -322,5 +367,14 @@ def timeout_winners():
             
     return None
     
-        
-    
+def update_balance_db(balance,cost):
+    session = create_session()
+    search = session.query(Balance).filter(Balance.balance_id=="balance1").first()
+    if search:
+        search.balance= balance
+        search.cost = cost
+        search.needed = cost-balance
+    else:
+        search = Balance(balance_id="balance1",balance = balance, cost=cost, needed = cost-balance)
+    session.add(search)
+    session.commit()

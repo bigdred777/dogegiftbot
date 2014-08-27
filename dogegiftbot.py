@@ -174,6 +174,7 @@ def check_commands():
                         msg.mark_as_read()
                         global last_his_succ
                         last_his_succ = datetime.datetime.now()
+                        update_balance_db(float(balance),float(getcost()))
                         
 		    else:
 		        msg.mark_as_read()
