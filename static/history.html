@@ -60,7 +60,14 @@
 </div>
 {% for tip in tips%}
 <div class="row">
-<div class = "small-6 columns"> {{tip.donor}} </div>
+
+<div class = "small-6 columns">
+{% if "/" in tip.donor %} 
+ {{tip.donor[3:]}} 
+ {% else %}
+ {{tip.donor}}
+ {%end%}
+ </div>
 <div class = "small-3 columns"> {{tip.amount}} </div>
 <div class = "small-3 columns"> {{tip.date[5:]}} </div>
 </div>
