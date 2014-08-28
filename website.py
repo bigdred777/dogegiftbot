@@ -23,6 +23,7 @@ class TipHistory(BaseDBObject):
         tips = []
         total = 0
         for tx in txs:
+            tx.dateobj = convert_date(tx.date)
             if "*" in tx.donor:
                 continue
             total += tx.amount
@@ -41,6 +42,12 @@ class TipHistory(BaseDBObject):
         if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
             self.update()
         return self.tips
+    def returnTipWindow(self, numDays, start = datetime.date.today()):
+        tipList = []
+        for tip in self.tips:
+            if start - tip.dateobj <= datetime.timedelta(days= numDays):
+                tipList.append(tip)
+        return tipList
 
 class Winners(BaseDBObject):
 
@@ -89,8 +96,12 @@ class BaseHandler(tornado.web.RequestHandler):
         self.render("static/index.html")
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/history.html",total=tipHistory.getTotal(), tips = tipHistory.getTips(),
-        balance = balance.getBalance(), cost = balance.getCost() )
+        try:
+            window = int(self.get_argument("window"))
+        except:
+            window = 7
+        self.render("static/history.html",total=tipHistory.getTotal(), tips = tipHistory.returnTipWindow(window),
+        balance = balance.getBalance(), cost = balance.getCost(),window = window)
 class WinnerHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp)
