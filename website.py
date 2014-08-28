@@ -57,10 +57,17 @@ class Winners(BaseDBObject):
 class DogeTipBotBalance(BaseDBObject):
     def update(self):
         session = create_session()
+        
         search = session.query(Balance).filter(Balance.balance_id == "balance1").first()
-        self.balance = search.balance
-        self.cost = search.cost
-        self.needed = search.needed
+        if search:
+            self.balance = search.balance
+            self.cost = search.cost
+            self.needed = search.needed
+            
+        else:
+            self.balance = 0
+            self.cost = 0
+            self.needed = 0
         self.lastUpdate = datetime.datetime.now()
         session.close()
     def getBalance(self):
