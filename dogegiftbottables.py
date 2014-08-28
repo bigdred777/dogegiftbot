@@ -167,7 +167,7 @@ def add_post(Post):
 def convert_date(date):
     format = "%Y-%m-%d"
     datetime_ob = datetime.datetime.strptime(date,format)
-    print int(datetime_ob.year),int(datetime_ob.month),int(datetime_ob.day)
+    
     date_ob = datetime.date(int(datetime_ob.year),int(datetime_ob.month),int(datetime_ob.day))
     return date_ob
 def get_winners():
