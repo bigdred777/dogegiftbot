@@ -119,7 +119,7 @@ application = tornado.web.Application([
 	(r"/check",CheckHandler),
 	(r"/checkapi",CheckAPI),
 
-],static_path=STATIC_PATH,login_url=r"/login/", debug=True,
+],static_path=STATIC_PATH,login_url=r"/login/", #debug=True,
  cookie_secret="35wfa35tgtres5wf5tyhxbt4"+str(random.randint(0,1000000)))
 
 if __name__ == "__main__":
