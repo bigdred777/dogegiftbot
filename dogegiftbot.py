@@ -84,14 +84,14 @@ def getDonors(text):
 		         	        
 		        	if line.split()[2] not in dict.keys():
 		        		        
-		           	  dict[line.split()[2]] = float(line.split()[6])
+		           	  dict[line.split()[2]] = float(line.split()[7])
 		           	  counter += 1
 		        	elif line.split()[2] in dict.keys():
-                                    dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[6])
+                                    dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[7])
                                     
                     elif line.split()[0] == "d":
                         anon_count+=1
-                        dict["anonymous "+str(anon_count)] = float(line.split()[6])
+                        dict["anonymous "+str(anon_count)] = float(line.split()[7])
                         counter+=1
                         
                 if counter == 10:

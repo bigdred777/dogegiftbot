@@ -1,49 +1,5 @@
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
- <link rel="shortcut icon" href="/static/favicon.ico" />
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- 
-  <link rel="stylesheet" href="/static/css/normalize.css">
-  <link rel="stylesheet" href="/static/css/foundation.css" />
- <script src="/static/js/vendor/modernizr.js"></script>
-    <title>DogegiftBot! </title>
-</head>
-<body>
-<nav class="top-bar" data-topbar>
-  <ul class="title-area">
-    <li class="name">
-      <h1><a href="/">DogeGiftBot</a></h1>
-    </li>
-    <li class="toggle-topbar menu-icon"><a href="/">Select</a></li>
-  </ul>
-
-  <section class="top-bar-section">
-  
-
-    <!-- Left Nav Section -->
-    <ul class="left">
-      <li><a href="/">About</a></li>
-	    <li class="has-dropdown">
-        <a href="/history">Donation History</a>
-        <ul class="dropdown">
-          <li><a href="/history?window=7">Last Week</a></li>
-		  <li><a href="/history?window=14">Last Two Weeks</a></li>
-		  <li><a href="/history?window=30">Last Month</a></li>
-		  <li><a href="/history?window=3000">All Time</a></li>
-		  
-        </ul>
-      </li>
-	  
-	  <li><a href="/winners"> Winners </a></li>
-	   <li><a href="/check"> Check Entry </a></li>
-    </ul>
-  </section>
-</nav>
+{%extends base.html %}
+{%block content %}
 <br>
 
 <div class = "row">
@@ -55,7 +11,7 @@
 </div>
 <br>
 <div class = "row">
-<div class = "small-12 columns"> Total all time donations: {{total}} Ð</div>
+<div class = "small-12 columns"> Total all time donations: {{"%.2f"%total}} Ð</div>
 </div>
 <br>
 <div class = "row">
@@ -78,17 +34,8 @@
  {{tip.donor}}
  {%end%}
  </div>
-<div class = "small-3 columns"> {{tip.amount}} </div>
+<div class = "small-3 columns"> {{"%.2f"%tip.amount}} </div>
 <div class = "small-3 columns"> {{tip.date[5:]}} </div>
 </div>
 {%end%}
-
-
-
-    <script src="/static/js/vendor/jquery.js"></script>
-    <script src="/static/js/foundation.min.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
-</body>
-</html>
+{%end%}

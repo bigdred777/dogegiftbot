@@ -58,7 +58,7 @@ class Balance(Base):
     balance = Column(Float)
     cost = Column(Float)
     needed = Column(Float)
- 
+    last_update = Column(String)
     
 class Posts(Base):
     post_id = Column(String, primary_key = True)
@@ -240,17 +240,27 @@ if __name__ == "__main__":
 
     
     engine = sql.create_engine("sqlite:///dogegiftbot.db")
-    Base.metadata.create_all(engine) 
-
+   
+    
     Session = sessionmaker(bind=engine)
     session = Session()
+    try:
+        session.execute("drop table balance")
+    except:
+        pass
+    
+    
     session.commit()
-    with open("entries.txt") as  read_file:
-        for line in read_file:
-            if line.strip == "":
-                break
-            add_entry(line.strip())
-        
+    
+    session.close()
+    
+    Base.metadata.create_all(engine) 
+
+
+    session = Session()
+    session.commit()
+
+    
 def add_history_to_db(tip_bot_text,bot_name):
     text = tip_bot_text.replace('|',' ').encode("ascii","replace")
     text2 = text.split("\n")
@@ -267,22 +277,22 @@ def add_history_to_db(tip_bot_text,bot_name):
         if tx[0] == "tip":
             name = tx[2]+ " " + tx[4]
             if name in tips:
-                tips[name] += float(tx[6])
+                tips[name] += float(tx[7])
             else:
-                tips[name] = float(tx[6])
+                tips[name] = float(tx[7])
         elif tx[0] == "d":
             name =  tx[4]
             if name in d:
-                d[name] += float(tx[6])
+                d[name] += float(tx[7])
             else:
-                d[name] = float(tx[6])
+                d[name] = float(tx[7])
         elif tx[0] == "w":
            
-            name =  tx[4] + " " +tx[5]
+            name =  tx[4] + " " +tx[6]
             if name in w:
-                w[name] += float(tx[6])
+                w[name] += float(tx[7])
             else:
-                w[name] = float(tx[6])
+                w[name] = float(tx[7])
 
     session = create_session()
     
@@ -374,7 +384,9 @@ def update_balance_db(balance,cost):
         search.balance= balance
         search.cost = cost
         search.needed = cost-balance
+        search.last_update = toTStamp(datetime.datetime.utcnow())
     else:
-        search = Balance(balance_id="balance1",balance = balance, cost=cost, needed = cost-balance)
+        search = Balance(balance_id="balance1",balance = balance, cost=cost,
+        needed = cost-balance,last_update = toTStamp(datetime.datetime.utcnow()))
     session.add(search)
     session.commit()

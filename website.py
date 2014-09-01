@@ -70,11 +70,12 @@ class DogeTipBotBalance(BaseDBObject):
             self.balance = search.balance
             self.cost = search.cost
             self.needed = search.needed
-            
+            self.last_history = search.last_update
         else:
             self.balance = 0
             self.cost = 0
             self.needed = 0
+            self.last_history = datetime.datetime.utcnow()-datetime.timedelta(hours = 5)
         self.lastUpdate = datetime.datetime.now()
         session.close()
     def getBalance(self):
@@ -94,6 +95,11 @@ class DogeTipBotBalance(BaseDBObject):
 class BaseHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/index.html")
+        
+class StatusHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("static/status.html", balance = balance.getBalance(), cost = balance.getCost(), last_hist= fromTStamp(balance.last_history),\
+        numWinners= len(winners.getWinners()))
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
         try:
@@ -131,10 +137,12 @@ class CheckAPI(tornado.web.RequestHandler):
 
 STATIC_PATH= os.path.join(os.path.dirname(__file__),r"static/")
 application = tornado.web.Application([
-	(r"/", BaseHandler),
+	(r"/", StatusHandler),
+	(r"/about", BaseHandler),
 	(r"/history",HistoryHandler),
 	(r"/winners",WinnerHandler),
 	(r"/check",CheckHandler),
+	(r"/status",StatusHandler),
 	(r"/checkapi",CheckAPI),
 
 ],static_path=STATIC_PATH,login_url=r"/login/", #debug=True,
