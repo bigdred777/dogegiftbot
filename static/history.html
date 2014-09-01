@@ -11,7 +11,7 @@
 </div>
 <br>
 <div class = "row">
-<div class = "small-12 columns"> Total all time donations: {{total}} Ð</div>
+<div class = "small-12 columns"> Total all time donations: {{"%.2f"%total}} Ð</div>
 </div>
 <br>
 <div class = "row">
@@ -34,7 +34,7 @@
  {{tip.donor}}
  {%end%}
  </div>
-<div class = "small-3 columns"> {{tip.amount}} </div>
+<div class = "small-3 columns"> {{"%.2f"%tip.amount}} </div>
 <div class = "small-3 columns"> {{tip.date[5:]}} </div>
 </div>
 {%end%}
