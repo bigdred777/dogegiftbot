@@ -548,7 +548,11 @@ while True:
 	datetime.datetime.now() - last_his_succ < datetime.timedelta(minutes = freq_bal_check):
 	    
 	    last_con_check = datetime.datetime.now()
-	    try_contest()
+	    #try_contest()
+	    if balance > getCost():
+	        for x in authorized:
+	           r.send_message(x,"check for contest","The balance is high enough for a contest, \n \n \
+If balance and gift cost are accurate you may start a contest by replying with +random contest")
 	    removed_winner = timeout_winners()
 	    if removed_winner:
 	       r.send_message(removed_winner,"Prize Expired", m.timeout_message)
