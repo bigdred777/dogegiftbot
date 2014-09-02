@@ -1,0 +1,41 @@
+{%extends base.html %}
+{%block content %}
+<div class="row">
+<div class = "small-12 columns"><h3>Top Donors</h3></div>
+</div>
+
+<div class="row">
+<h4>
+<div class = "small-8 columns"> Donor </div>
+<div class = "small-4 columns"> Amount </div>
+</h4>
+
+</div>
+<br>
+{% if len(donors) > 5%}
+{% for i in range(5)%}
+<div class="row">
+
+<div class = "small-8 columns">
+{{donors[i].donor}}
+
+ </div>
+<div class = "small-4 columns"> {{"%.2f"%donors[i].amount}} </div>
+
+</div>
+{%end%}
+{%else%}
+{% for tip in donors%}
+<div class="row">
+
+<div class = "small-8 columns">
+{{tip.donor}}
+
+ </div>
+<div class = "small-4 columns"> {{"%.2f"%tip.amount}} </div>
+
+</div>
+
+{%end%}
+{%end%}
+{%end%}

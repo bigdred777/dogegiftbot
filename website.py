@@ -11,6 +11,16 @@ class BaseDBObject():
     def __init__(self):
        self.update()
     
+class Donor():
+    def __init__(self,donor,amount):
+        self.amount = float(amount)
+        self.donor = donor
+    def __repr__(self):
+        return "%s : %.2f" % (self.donor, self.amount)
+    def __cmp__(self,other):
+        return  other.amount-self.amount
+
+        
 class TipHistory(BaseDBObject):
 
     def update(self):
@@ -31,11 +41,24 @@ class TipHistory(BaseDBObject):
         self.total = total
         self.tips = tips
         self.lastUpdate = datetime.datetime.now()
+        donors = {}
+        for tip in tips:
+            if tip.donor in donors:
+                donors[tip.donor] += tip.amount
+            else:
+                donors[tip.donor] = tip.amount
+        donor_list =[]
+        for key in donors.keys():
+            donor_list.append(Donor(key,donors[key]))
+        donor_list.sort()
+        self.donors=donor_list
+            
+
+
         
     def getTotal(self):
         
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
-            print "update"
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
             self.update()  
         return self.total
     def getTips(self):
@@ -126,7 +149,10 @@ class CheckAPI(tornado.web.RequestHandler):
         else:
             self.write("False")
         
-    
+class DonorHandler(tornado.web.RequestHandler):
+    def get(self):
+
+        self.render("static/donors.html",donors = tipHistory.donors)
     
 
        
@@ -144,7 +170,7 @@ application = tornado.web.Application([
 	(r"/check",CheckHandler),
 	(r"/status",StatusHandler),
 	(r"/checkapi",CheckAPI),
-
+        (r"/donors",DonorHandler),
 ],static_path=STATIC_PATH,login_url=r"/login/", #debug=True,
  cookie_secret="35wfa35tgtres5wf5tyhxbt4"+str(random.randint(0,1000000)))
 

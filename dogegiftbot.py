@@ -23,7 +23,7 @@ r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
 freq_bal_check = 10 # time in minute
-contest_freq = 5 
+contest_freq = 120 
 
 ###### config section ############
 
