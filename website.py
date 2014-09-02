@@ -48,7 +48,10 @@ class TipHistory(BaseDBObject):
             if start - tip.dateobj <= datetime.timedelta(days= numDays):
                 tipList.append(tip)
         return tipList
-
+def _sortByTip(item1, item2):
+    return -int(item1.amount-item2.amount)
+def returnAmount(item):
+        return item.amount
 class Winners(BaseDBObject):
 
     def update(self):
@@ -108,6 +111,7 @@ class HistoryHandler(tornado.web.RequestHandler):
             window = 7
         self.render("static/history.html",total=tipHistory.getTotal(), tips = tipHistory.returnTipWindow(window),
         balance = balance.getBalance(), cost = balance.getCost(),window = window)
+        
 class WinnerHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp)
@@ -127,7 +131,16 @@ class CheckAPI(tornado.web.RequestHandler):
             self.write("False")
         
     
-    
+class DonatorHandler(tornado.web.RequestHandler):
+    def get(self):
+        try:
+            window = int(self.get_argument("window"))
+        except:
+            window = 7
+        allTimeTips = tipHistory.getTips()
+        allTimeTips.sort(_sortByTip)
+        self.render("static/donations.html",total=tipHistory.getTotal(), allTimeTips = allTimeTips,
+        balance = balance.getBalance(),windowTips = tipHistory.returnTipWindow(window).sort(_sortByTip), cost = balance.getCost(),window = window)   
 
        
 
@@ -143,9 +156,10 @@ application = tornado.web.Application([
 	(r"/winners",WinnerHandler),
 	(r"/check",CheckHandler),
 	(r"/status",StatusHandler),
+	(r"/donator",DonatorHandler),
 	(r"/checkapi",CheckAPI),
 
-],static_path=STATIC_PATH,login_url=r"/login/", #debug=True,
+],static_path=STATIC_PATH,login_url=r"/login/", debug=True,
  cookie_secret="35wfa35tgtres5wf5tyhxbt4"+str(random.randint(0,1000000)))
 
 if __name__ == "__main__":

@@ -1,0 +1,39 @@
+{%extends base.html %}
+{%block content %}
+<br>
+
+<div class = "row">
+<div class = "small-12 columns"> Balance: {{balance}} Ð</div>
+</div>
+<br>
+<div class = "row">
+<div class = "small-12 columns"> DogeGiftBot needs {{cost-balance}} Ð for the next winner</div>
+</div>
+<br>
+
+
+<div class = "row">
+<div class = "small-12 columns"> Donations from the last {{window}} days</div>
+</div>
+<br>
+<div class="row">
+<div class = "small-6 columns"> Donor </div>
+<div class = "small-3 columns"> Amount </div>
+<div class = "small-3 columns"> Date </div>
+
+</div>
+{% for tip in allTimeTips%}
+<div class="row">
+
+<div class = "small-6 columns">
+{% if "/" in tip.donor %} 
+ {{tip.donor[3:]}} 
+ {% else %}
+ {{tip.donor}}
+ {%end%}
+ </div>
+<div class = "small-3 columns"> {{"%.2f"%tip.amount}} </div>
+<div class = "small-3 columns"> {{tip.date[5:]}} </div>
+</div>
+{%end%}
+{%end%}
