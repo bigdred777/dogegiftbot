@@ -546,12 +546,14 @@ while True:
 
 	if datetime.datetime.now() - last_con_check > datetime.timedelta(minutes = contest_freq) and \
 	datetime.datetime.now() - last_his_succ < datetime.timedelta(minutes = freq_bal_check):
-	    
+
 	    last_con_check = datetime.datetime.now()
 	    #try_contest()
-	    if balance > getcost():
-	        for x in authorized:
-	           r.send_message(x,"check for contest","The balance is high enough for a contest, \n \n \
+	    print "balance %s " %str(balance)
+	    print "gift cost %s " % str(getcost())
+	    if float(balance) > float(getcost()):
+	           for x in authorized:
+	               r.send_message(x,"check for contest","The balance is high enough for a contest, \n \n \
 If balance and gift cost are accurate you may start a contest by replying with +random contest")
 	    removed_winner = timeout_winners()
 	    if removed_winner:
