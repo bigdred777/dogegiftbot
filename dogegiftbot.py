@@ -12,7 +12,7 @@ import hashlib
 from dogegiftbotmessages import dogegiftbotmessages
 import requests
 m = dogegiftbotmessages()
-r = praw.Reddit(user_agent='dogegiftbot version 1.1')
+r = praw.Reddit(user_agent='dogegiftbot version 1.2')
 
 ###### config section ############
 bot_name = "dogemultisigescrow"
