@@ -12,7 +12,7 @@ import hashlib
 from dogegiftbotmessages import dogegiftbotmessages
 import requests
 m = dogegiftbotmessages()
-r = praw.Reddit(user_agent='dogegiftbot version 1.1')
+r = praw.Reddit(user_agent='dogegiftbot version 1.2')
 
 ###### config section ############
 bot_name = "dogemultisigescrow"
@@ -23,7 +23,7 @@ r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
 freq_bal_check = 10 # time in minute
-contest_freq = 120 
+contest_freq = 5
 
 ###### config section ############
 
@@ -55,6 +55,7 @@ donor_dict = {}
 
 
 
+balance_message = False
 already_won = get_winners()
 
 
@@ -101,6 +102,7 @@ def getDonors(text):
 	print dict                              
         return dict	
 def getaddress(winner,card):
+        
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
 		'user_id':winner,
@@ -158,6 +160,7 @@ def check_commands():
 	msgs = r.get_unread(limit=None)
 	for msg in msgs:
 	        global balance
+	        global balance_message
 	        if type(msg) != praw.objects.Message:
 	            msg.mark_as_read()
 	            print "NEW comment reply: ",
@@ -281,6 +284,8 @@ def check_commands():
 
 				
 		elif '+accept' in body and auth in already_won:
+                    
+		    balance_message = False
 		    if float(balance) > float(getcost()):
           		    msg.mark_as_read()
           		    prize = body.split("+accept ")
@@ -300,6 +305,8 @@ def check_commands():
 		    print "proccessing pass request"
 		    
 		    passed_to = body.split("pass ")[1].split()[0]
+                    for x in authorized:
+	               r.send_message(x,"user has passed","%s has passed the prize to %s"%(auth,passed_to)) 
 		    if passed_to == 'random':
 		        
 		        win = get_winner(msg,entries)
@@ -520,7 +527,8 @@ def try_contest():
 
 #bot loop
 
-while True: 
+while True:
+     
     try:
         
         already_won = get_winners()
@@ -551,10 +559,15 @@ while True:
 	    #try_contest()
 	    print "balance %s " %str(balance)
 	    print "gift cost %s " % str(getcost())
-	    if float(balance) > float(getcost()):
-	           for x in authorized:
-	               r.send_message(x,"check for contest","The balance is high enough for a contest, \n \n \
+	    
+	    if float(balance) > float(getcost())*len(winners):
+	           
+	           if not balance_message:
+	               for x in authorized:
+	                   r.send_message(x,"check for contest","The balance is high enough for a contest, \n \n \
 If balance and gift cost are accurate you may start a contest by replying with +random contest")
+	              
+	               balance_message = True
 	    removed_winner = timeout_winners()
 	    if removed_winner:
 	       r.send_message(removed_winner,"Prize Expired", m.timeout_message)

@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 class dogegiftbotmessages():
     def __init__(self):
-        self.footer = " \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
-        self.win_post = """  
+        self.footer = u" \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
+        self.win_post = u"""  
  **/u/%s, congratulations!**  
  You are the proud new owner of a $25 gift-card purchased with Ð! A PM has been sent to you with more details.  
  -We would like to thank all members of the community here at /r/dogecoin and everyone who donated in this round. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
