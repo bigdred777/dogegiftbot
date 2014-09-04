@@ -560,7 +560,7 @@ while True:
 	    print "balance %s " %str(balance)
 	    print "gift cost %s " % str(getcost())
 	    
-	    if float(balance) > float(getcost())*len(winners):
+	    if float(balance) > float(getcost())*(len(winners)+1):
 	           
 	           if not balance_message:
 	               for x in authorized:
