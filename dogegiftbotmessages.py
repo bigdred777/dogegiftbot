@@ -1,21 +1,23 @@
 class dogegiftbotmessages():
     def __init__(self):
         self.footer = " \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
-        self.win_post = """The winner is...   
- **/u/%s**! Congratulations!  
- You are the winner of this round of a $25 gift-card purchased with Dogecoin!  
- A PM has been sent to you with more details.  
- We would like to thank all members of the community here at /r/dogecoin. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
- A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Check out their site
+        self.win_post = """  
+ **/u/%s, congratulations!**  
+ You are the proud new owner of a $25 gift-card purchased with Ð! A PM has been sent to you with more details.  
+ -We would like to thank all members of the community here at /r/dogecoin and everyone who donated in this round. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
+ -A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Check out their site
 and maybe you might see a gift card you or someone you know might like.  :)  And of course they do accept doge coins for payment.  
- If you would like to participate in dogegiftbot giveaways, simply click [here](%s).  
- If you want to opt-out of these giveaways, click [here](%s).  
- If you would like to see some information on the current round, click [here](%s).  
-  
+ -It's totally free to enter giveaway! If you would like to enter in DogeGifBbot giveaways, simply click [here](%s).  
+ -If you want to opt-out of these giveaways, click [here](%s).  
+ -If you would like to see some information on the current round, click [here](%s).  
+ -www.dogegiftbot.com  *very basic site we have made for now. Please donate design if you can. <3
+ 
  --/u/dogegiftbot Team  
  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Coded ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http://www.bots4doge.com)   
+ ^Bot ^version ^1.0 ^programmed ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http://www.bots4doge.com)
+ ^Bot ^version ^1.1. ^upgrade ^programmed ^by ^/u/Doomhammer458
+ ^DogeGiftBot ^Hosting ^is ^provided ^by ^https://nanobit.pl/.
 """ +self.footer
  #winner, entry link , optout link , history link
  
