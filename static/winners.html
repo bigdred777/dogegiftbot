@@ -11,16 +11,14 @@
 <br>
 <div class="row">
 <div class = "small-6 columns"> Redditor </div>
-<div class = "small-3 columns"> Prize </div>
-<div class = "small-3 columns"> Date </div>
+<div class = "small-5 columns"> Date </div>
 
 </div>
 <br>
 {% for win in winners%}
 <div class="row">
 <div class = "small-6 columns"> {{win.winner}} </div>
-<div class = "small-3 columns"> {{win.prize}} </div>
-<div class = "small-3 columns">{{fromTStamp(win.date).month}}-{{fromTStamp(win.date).day}} </div>
+<div class = "small-5 columns">{{fromTStamp(win.date).month}}-{{fromTStamp(win.date).day}} </div>
 </div>
 {%end%}
 {%if len(pending) > 0 %}

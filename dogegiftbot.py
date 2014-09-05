@@ -596,6 +596,6 @@ If balance and gift cost are accurate you may start a contest by replying with +
  	          time.sleep(20)
  	print "exception traceback"
  	traceback.print_exc() 
- 	print 'Please send the above information to the author of this program'
+ 	print 'Please send the above information to the author of this program.'
  	time.sleep(10)
  	continue 
