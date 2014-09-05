@@ -144,6 +144,11 @@ def remove_entry(User):
         session.delete(search)
         session.commit()
     return 1
+def count_entries():
+    session = create_session()
+    count = session.query(Entries).count()
+    session.close()
+    return str(count)
         
 def get_posts():
 

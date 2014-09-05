@@ -52,6 +52,7 @@ class TipHistory(BaseDBObject):
             donor_list.append(Donor(key,donors[key]))
         donor_list.sort()
         self.donors=donor_list
+        
             
 
 
@@ -80,10 +81,13 @@ class Winners(BaseDBObject):
         self.winners.sort()
         self.lastUpdate = datetime.datetime.now()
         session.close()
+        self.pending = get_winners()
     def getWinners(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=30):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
             self.update()
         return self.winners
+    def getPending(self):
+        return self.pending
 class DogeTipBotBalance(BaseDBObject):
     def update(self):
         session = create_session()
@@ -122,7 +126,7 @@ class BaseHandler(tornado.web.RequestHandler):
 class StatusHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/status.html", balance = balance.getBalance(), cost = balance.getCost(), last_hist= fromTStamp(balance.last_history),\
-        numWinners= len(winners.getWinners()))
+        numWinners= len(winners.getWinners()),numEntries = count_entries())
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
         try:
@@ -133,10 +137,10 @@ class HistoryHandler(tornado.web.RequestHandler):
         balance = balance.getBalance(), cost = balance.getCost(),window = window)
 class WinnerHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp)
+        self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp, pending = winners.getPending())
 class CheckHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/check.html")
+        self.render("static/check.html",numEntries = count_entries())
 class CheckAPI(tornado.web.RequestHandler):
     def get(self):
         try:
