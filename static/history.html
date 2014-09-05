@@ -3,15 +3,15 @@
 <br>
 
 <div class = "row">
-<div class = "small-12 columns"> Balance: {{"{:,.2f}".format(balance)}} Ð</div>
+<div class = "small-12 columns"> Balance: {{balance}} Ð</div>
 </div>
 <br>
 <div class = "row">
-<div class = "small-12 columns"> DogeGiftBot needs {{"{:,.2f}".format(cost-balance)}} Ð for the next winner</div>
+<div class = "small-12 columns"> DogeGiftBot needs {{cost-balance}} Ð for the next winner</div>
 </div>
 <br>
 <div class = "row">
-<div class = "small-12 columns"> Total all time donations: {{"{:,.2f}".format(total)}} Ð</div>
+<div class = "small-12 columns"> Total all time donations: {{"%.2f"%total}} Ð</div>
 </div>
 <br>
 <div class = "row">
@@ -36,7 +36,7 @@
  {{tip.donor}}
  {%end%}
  </div>
-<div class = "small-3 columns"> {{"{:,.2f}".format(tip.amount)}} </div>
+<div class = "small-3 columns"> {{"%.2f"%tip.amount}} </div>
 <div class = "small-3 columns"> {{tip.date[5:]}} </div>
 </div>
 {%end%}
