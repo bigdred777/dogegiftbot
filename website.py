@@ -126,7 +126,7 @@ class BaseHandler(tornado.web.RequestHandler):
 class StatusHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/status.html", balance = balance.getBalance(), cost = balance.getCost(), last_hist= fromTStamp(balance.last_history),\
-        numWinners= len(winners.getWinners()))
+        numWinners= len(winners.getWinners()),numEntries = count_entries())
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
         try:
@@ -140,7 +140,7 @@ class WinnerHandler(tornado.web.RequestHandler):
         self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp, pending = winners.getPending())
 class CheckHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/check.html")
+        self.render("static/check.html",numEntries = count_entries())
 class CheckAPI(tornado.web.RequestHandler):
     def get(self):
         try:
@@ -175,7 +175,7 @@ application = tornado.web.Application([
 	(r"/status",StatusHandler),
 	(r"/checkapi",CheckAPI),
         (r"/donors",DonorHandler),
-],static_path=STATIC_PATH,login_url=r"/login/", #debug=True,
+],static_path=STATIC_PATH,login_url=r"/login/", debug=True,
  cookie_secret="35wfa35tgtres5wf5tyhxbt4"+str(random.randint(0,1000000)))
 
 if __name__ == "__main__":
