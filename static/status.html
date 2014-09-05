@@ -9,9 +9,9 @@
 {%else%}
 <h4 style = "color:green"> Online </h4>
  {%end%}
-<h4>Balance: {{"%.2f" %(balance)}}</h4>
+<h4>Balance: {{"{:,.2f}".format(balance)}}</h4>
 
-<h4>Coins needed for next drawing: {{"%.2f" %(cost-balance)}} </h4>
+<h4>Coins needed for next drawing: {{"{:,.2f}".format(cost-balance) }} </h4>
 
 <h4>There has been {{numEntries}} entries and {{numWinners}} winners. </h4>
  
