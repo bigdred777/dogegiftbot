@@ -24,7 +24,7 @@
  {%end%}
 
  </div>
-<div class = "small-4 columns"> {{"%.2f"%donors[i].amount}} </div>
+<div class = "small-4 columns"> {{"{:,.2f}".format(donors[i].amount)}} </div>
 
 </div>
 {%end%}
@@ -40,7 +40,7 @@
  {%end%}
  </div>
 
-<div class = "small-4 columns"> {{"%.2f"%tip.amount}} </div>
+<div class = "small-4 columns"> {{"{:,.2f}".format(tip.amount)}} </div>
 
 </div>
 
