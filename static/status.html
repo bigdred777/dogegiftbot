@@ -2,7 +2,7 @@
 {%block content %}
 <div class = "row">
 <div class="small-12 columns">
-<h3>Bot Status</h3>
+<h3>DogeGiftBot Status</h3>
 
 {% if datetime.datetime.utcnow() - last_hist > datetime.timedelta(minutes = 20)%}
 <h4 style = "color:red"> Offline </h4>
@@ -11,9 +11,9 @@
  {%end%}
 <h4>Balance: {{"%.2f" %(balance)}}</h4>
 
-<h4>Coins needed for next drawing: {{"%.2f" %(cost-balance)}} </h4>
+<h4>Ðoge coins needed for next drawing: {{"%.2f" %(cost-balance)}} </h4>
 
-<h4>There has been {{numEntries}} entries and {{numWinners}} winners. </h4>
+<h4>There is {{numEntries}} entries and {{numWinners}} winners so far! </h4>
  
 <h4><img src="http://i.imgur.com/Ol2vu8A.png" alt="DogeGiftBot"> </h4>
 
