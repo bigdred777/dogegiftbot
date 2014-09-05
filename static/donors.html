@@ -17,10 +17,10 @@
 <div class="row">
 
 <div class = "small-8 columns">
-{% if "/" in tip.donor %} 
- {{tip.donor[3:]}} 
+{% if "/" in donors[i] %} 
+ {{donors[i].donor[3:]}} 
  {% else %}
- {{tip.donor}}
+ {{donors[i].donor}}
  {%end%}
 
  </div>
