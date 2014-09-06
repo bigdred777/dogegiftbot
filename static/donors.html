@@ -6,8 +6,8 @@
 
 <div class="row">
 <h4>
-<div class = "small-5 columns"> Donor </div>
-<div class = "small-4 columns end" style="text-align:right;"> Amount </div>
+<div class = "small-8 columns"> Donor </div>
+<div class = "small-4 columns"> Amount </div>
 </h4>
 
 </div>
@@ -16,7 +16,7 @@
 {% for i in range(10)%}
 <div class="row">
 
-<div class = "small-5 columns">
+<div class = "small-8 columns">
 {% if donors[i].donor[0] =="/" %} 
  {{donors[i].donor[3:]}} 
  {% else %}
@@ -24,7 +24,7 @@
  {%end%}
 
  </div>
-<div class = "small-4 columns end" style="text-align:right;"> {{"{:,.2f}".format(donors[i].amount)}} </div>
+<div class = "small-4 columns"> {{"{:,.2f}".format(donors[i].amount)}} </div>
 
 </div>
 {%end%}
@@ -32,7 +32,7 @@
 {% for tip in donors%}
 <div class="row">
 
-<div class = "small-5 columns">
+<div class = "small-8 columns">
 {% if "/" in tip.donor %} 
  {{tip.donor[3:]}} 
  {% else %}
@@ -40,7 +40,7 @@
  {%end%}
  </div>
 
-<div class = "small-4 columns end" style="text-align:right;"> {{"{:,.2f}".format(tip.amount)}} </div>
+<div class = "small-4 columns"> {{"{:,.2f}".format(tip.amount)}} </div>
 
 </div>
 
