@@ -20,24 +20,24 @@
 <br>
 <h4>
 <div class="row">
-<div class = "small-6 columns"> Donor </div>
-<div class = "small-3 columns"> Amount </div>
-<div class = "small-3 columns"> Date </div>
+<div class = "small-6 large-3 columns"> Donor </div>
+<div class = "small-3 large-2 columns" style = "text-align:right;"> Amount </div>
+<div class = "small-3 large-2 columns end"> Date </div>
 </h4>
 </div>
 
 {% for tip in tips%}
 <div class="row">
 
-<div class = "small-6 columns">
+<div class = "small-6 large-3 columns">
 {% if "/" in tip.donor %} 
  {{tip.donor[3:]}} 
  {% else %}
  {{tip.donor}}
  {%end%}
  </div>
-<div class = "small-3 columns"> {{"{:,.2f}".format(tip.amount)}} </div>
-<div class = "small-3 columns"> {{tip.date[5:]}} </div>
+<div class = "small-3 large-2 columns" style = "text-align:right;"> {{"{:,.2f}".format(tip.amount)}} </div>
+<div class = "small-3 large-2 columns end"> {{tip.date[5:]}} </div>
 </div>
 {%end%}
 {%end%}
