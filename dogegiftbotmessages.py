@@ -11,7 +11,7 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  -It's totally free to enter giveaway! If you would like to enter in DogeGifBbot giveaways, simply click [here](%s).  
  -If you want to opt-out of these giveaways, click [here](%s).  
  -If you would like to see some information on the current round, click [here](%s).  
- -www.dogegiftbot.com  *very basic site we have made for now. Please donate design if you can. <3
+ -www.dogegiftbot.com  Check out the new website! <3
  
  --/u/dogegiftbot Team  
  
