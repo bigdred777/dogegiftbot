@@ -8,9 +8,8 @@ class dogegiftbotmessages():
  -We would like to thank all members of the community here at /r/dogecoin and everyone who donated in this round. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
  -A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Check out their site
 and maybe you might see a gift card you or someone you know might like.  :)  And of course they do accept doge coins for payment.  
- -It's totally free to enter giveaway! If you would like to enter in DogeGifBbot giveaways, simply click [here](%s).  
- -If you want to opt-out of these giveaways, click [here](%s).  
- -If you would like to see some information on the current round, click [here](%s).  
+ -It's totally free to enter the DogeGiftBot giveaway! If you would like to enter the giveaway, simply click [here](%s).
+ -If you would like to see information on the current round, click [here](%s).  
  -www.dogegiftbot.com  Check out the new website! <3
  
  --/u/dogegiftbot Team  
