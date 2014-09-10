@@ -114,6 +114,14 @@ class DogeTipBotBalance(BaseDBObject):
         if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
             self.update()
         return self.cost
+    def printBalance(self):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+            self.update()
+        bal = float(self.getBalance())
+        cost = float(self.getCost())
+        while bal > cost:
+            bal -= cost
+        return bal
 
     
 
@@ -125,8 +133,8 @@ class BaseHandler(tornado.web.RequestHandler):
         
 class StatusHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/status.html", balance = balance.getBalance(), cost = balance.getCost(), last_hist= fromTStamp(balance.last_history),\
-        numWinners= len(winners.getWinners()),numEntries = count_entries())
+        self.render("static/status.html", balance = balance.printBalance(), cost = balance.getCost(), last_hist= fromTStamp(balance.last_history),\
+        numWinners= count_winners(),numEntries = count_entries())
 class HistoryHandler(tornado.web.RequestHandler):
     def get(self):
         try:
@@ -137,7 +145,8 @@ class HistoryHandler(tornado.web.RequestHandler):
         balance = balance.getBalance(), cost = balance.getCost(),window = window)
 class WinnerHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp, pending = winners.getPending())
+        self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp, pending = winners.getPending(),\
+        winnerCount =count_winners())
 class CheckHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/check.html",numEntries = count_entries())
