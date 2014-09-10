@@ -142,7 +142,7 @@ class HistoryHandler(tornado.web.RequestHandler):
         except:
             window = 7
         self.render("static/history.html",total=tipHistory.getTotal(), tips = tipHistory.returnTipWindow(window),
-        balance = balance.getBalance(), cost = balance.getCost(),window = window)
+        balance = balance.printBalance(), cost = balance.getCost(),window = window)
 class WinnerHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/winners.html",winners = winners.getWinners(),datetime = datetime, fromTStamp = fromTStamp, pending = winners.getPending(),\
