@@ -309,14 +309,14 @@ def check_commands():
 	               r.send_message(x,"user has passed","%s has passed the prize to %s"%(auth,passed_to)) 
 		    if passed_to == 'random':
 		        
-		        win = get_winner(msg,entries)
+		        win = get_winner(msg,entries,passer=auth)
 		        msg.reply("You have passed on the prize to %s" % (win) +m.footer)
 		        remove_winner(auth)
 		        
                     else:
                         try:
                             p = r.get_redditor(passed_to).name
-                            get_winner(msg,entries,p)
+                            get_winner(msg,entries,p,auth)
                             msg.reply("You have passed the prize to " + passed_to +m.footer) 
                             remove_winner(auth)
                     
@@ -385,7 +385,7 @@ def custom_contest(entries):
 		        return winner
 		
     
-def get_winner(msg, entries,winner=None):
+def get_winner(msg, entries,winner=None, passer=None):
 	choose_winner = 0
 	exit_var = 'stay alive'
 	if winner:
@@ -434,8 +434,11 @@ def get_winner(msg, entries,winner=None):
 				time.sleep(5)
 			print winner + ' won!'
 			
-		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot giveaway!!'% (winner),text=m.win_post % (winner, m.entry_link, m.optout_link,m.history_link))
+		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot giveaway!!'% (winner),text=m.win_post % (winner, m.entry_link,m.history_link))
 		postLink = "http://redd.it/"+winning_postid.id 
+		if passer:
+		    print "%s has passed the prize to %s!"% (passer,winner)
+		    winning_postid.add_comment("%s has passed the prize to %s!"% (passer,winner)) 
 		print postLink
 		for person in authorized:
 		    r.send_message(person,"New Winner!","%s has been chosen as a winner! Congratulate them [here!](%s)" % (winner, postLink))
