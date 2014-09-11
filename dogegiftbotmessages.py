@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 class dogegiftbotmessages():
     def __init__(self):
-        self.footer = u" \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
-        self.win_post = u"""  
+        self.footer = " \n \n^This ^bot ^is ^run ^on ^community ^donations. ^Donate ^by ^tipping ^through ^/u/dogetipbot ^or ^sending ^Dogecoin ^to ^+/u/dogetipbot ^@D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w ^AMOUNT ^doge ^verify"
+        self.win_post = """  
  **/u/%s, congratulations!**  
- You are the proud new owner of a $25 gift-card purchased with Ð! A PM has been sent to you with more details.  
+ You are the proud new owner of a $25 gift-card purchased with &ETH;! A PM has been sent to you with more details.  
  -We would like to thank all members of the community here at /r/dogecoin and everyone who donated in this round. Without you, this wouldn't be possible because this is a crowd funded gift bot.  
  -A special thank you to the folks at [eGifter](http://www.egifter.com) for supplying the large selection of cards. Check out their site
 and maybe you might see a gift card you or someone you know might like.  :)  And of course they do accept doge coins for payment.  
@@ -19,7 +19,7 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  ^Bot ^version ^1.1. ^upgrade ^programmed ^by ^/u/Doomhammer458
  ^DogeGiftBot ^Hosting ^is ^provided ^by ^https://nanobit.pl/.
 """ +self.footer
- #winner, entry link , optout link , history link
+ #winner, entry link , history link
  
         self.entry_link="http://www.reddit.com/message/compose?to=dogegiftbot&subject=enter&message=%2Bentry"
         self.optout_link = 'http://www.reddit.com/message/compose?to=dogegiftbot&subject=optout&message=%2Boptout'
