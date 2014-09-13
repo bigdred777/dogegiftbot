@@ -158,9 +158,13 @@ def getcost():
 def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
+	
+
 	for msg in msgs:
+	        
 	        global balance
 	        global balance_message
+	        update_balance_db(float(balance),float(getcost()))
 	        if type(msg) != praw.objects.Message:
 	            msg.mark_as_read()
 	            print "NEW comment reply: ",

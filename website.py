@@ -106,16 +106,16 @@ class DogeTipBotBalance(BaseDBObject):
         self.lastUpdate = datetime.datetime.now()
         session.close()
     def getBalance(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()
         return self.balance
         
     def getCost(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()
         return self.cost
     def printBalance(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()
         bal = float(self.getBalance())
         cost = float(self.getCost())

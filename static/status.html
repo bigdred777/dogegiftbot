@@ -4,7 +4,7 @@
 <div class="small-12 columns">
 <h3>DogeGiftBot Status</h3>
 
-{% if datetime.datetime.utcnow() - last_hist > datetime.timedelta(minutes = 20)%}
+{% if datetime.datetime.utcnow() - last_hist > datetime.timedelta(minutes = 30)%}
 <h4 style = "color:red"> Offline </h4>
 {%else%}
 <h4 style = "color:green"> Online </h4>
