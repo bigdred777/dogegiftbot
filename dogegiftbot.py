@@ -151,7 +151,7 @@ def getcost():
            	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
            	cost = xdg_price * 26
            	cost_two = cost + 100
-        if cost_two < 100000:
+        if cost_two < 10000:
             return 1000000000.0
         return cost_two
            	
