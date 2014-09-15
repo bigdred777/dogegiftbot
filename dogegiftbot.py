@@ -102,7 +102,7 @@ def getDonors(text):
 	print dict                              
         return dict	
 def getaddress(winner,card):
-        
+        #return "DLUQmKYpefjkg17G8CFj8bBok4cwhJELxK" #debug  mode
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
 		'user_id':winner,
@@ -114,6 +114,20 @@ def getaddress(winner,card):
 	f = urllib2.urlopen(request)
 	address = f.read()[54:-17]
 	return address
+def getcost():
+        #return 100 #debug mode
+	status_code = 404
+	while status_code != 200:
+           	f = requests.get('https://x.g0cn.com/prices')
+           	status_code = f.status_code
+           	price_dict = f.json()
+           	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
+           	cost = xdg_price * 26
+           	cost_two = cost + 100
+        if cost_two < 10000:
+            return 1000000000.0
+        return cost_two
+           	
 def savelists(entries, already_won, done):
 	file = open('entries.txt','w')
 	list = []
@@ -142,19 +156,7 @@ def savelists(entries, already_won, done):
 	file.close()
 	file2.close()
 	file3.close()
-def getcost():
-	status_code = 404
-	while status_code != 200:
-           	f = requests.get('https://x.g0cn.com/prices')
-           	status_code = f.status_code
-           	price_dict = f.json()
-           	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
-           	cost = xdg_price * 26
-           	cost_two = cost + 100
-        if cost_two < 10000:
-            return 1000000000.0
-        return cost_two
-           	
+
 def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
@@ -293,7 +295,7 @@ def check_commands():
 		    if float(balance) > float(getcost()):
           		    msg.mark_as_read()
           		    prize = body.split("+accept ")
-          		    prize = prize[1].split()[0]
+          		    prize = prize[1]
           		    add_winner(auth,prize=prize,claim=True)
           		    send_prize(auth,prize)
           		    
@@ -563,7 +565,7 @@ while True:
 	datetime.datetime.now() - last_his_succ < datetime.timedelta(minutes = freq_bal_check):
 
 	    last_con_check = datetime.datetime.now()
-	    #try_contest()
+	    #try_contest() #uncomment for autmatic mode
 	    print "balance %s " %str(balance)
 	    print "gift cost %s " % str(getcost())
 	    
