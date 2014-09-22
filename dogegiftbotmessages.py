@@ -15,9 +15,8 @@ and maybe you might see a gift card you or someone you know might like.  :)  And
  --/u/dogegiftbot Team  
  
  ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
- ^Bot ^version ^1.0 ^programmed ^by ^/u/PieMan2201 ^through ^[bots4doge.com](http://www.bots4doge.com)
- ^Bot ^version ^1.1. ^upgrade ^programmed ^by ^/u/Doomhammer458
- ^DogeGiftBot ^Hosting ^is ^provided ^by ^https://nanobit.pl/.
+ ^Bot ^& ^www.dogegiftbot.com ^programmed ^by ^/u/Doomhammer458
+ ^DogeGiftBot ^Hosting ^is ^provided ^by ^https://nanobit.pl/. ^Affordable ^VPS ^hosting.
 """ +self.footer
  #winner, entry link , history link
  
@@ -30,13 +29,14 @@ Simply go to their website and pick what company you would like your gift card f
 you would like for your gift then the accept command would look like this "%s Amazon " 
 Once you send the accept command it can take a few minutes to get your card sent to your reddit inbox. If it does not come within
 an hour then contact /u/bigdred777 or /u/TheLobstrosity so that we can make sure you get your card.
--If you would like to pass the gift to another random person, reply with "+pass random".  
--If you would like to pass to another Redditor, then reply with "+pass [name of redditor] " to pass it to a specific redditor. Redditor must be in giveaway to win. 
+-If you would like to pass the gift card to another random person, reply with "+pass random".  
+-If you would like to pass to directly to another Redditor, then reply with "+pass [name of redditor] " If you want to pass the gift card to
+specific redditor they must be in the giveaway. You can check if that person is in the giveaway via this link. http://www.dogegiftbot.com/check 
 -You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.
 *To re-enter the giveaway you will need to post a new link thread with a picture of something you bought with your gift card, 
 also write down on a piece of paper your reddit username and include that in the picture. Then simply comment in your thread and
 include the "+enter again" command. A admin will then manually verify your picture and then will add you back into the giveaway.
-You will receive conformation of your re-entry.
+You will receive confirmation of your re-entry.
 
 \n \n %s \n \n %s \n \n %s
 
@@ -62,7 +62,9 @@ or send Dogecoin to D8vVxYMKkmUKRpmG82Z6FCfwZWC4rgVT5w.
 If you send Dogecoin from your wallet your name will show up as "anonymous".  
 ^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
 
-^Programmed ^by ^/u/PieMan2201 ^through ^bots4doge.com''' 
+^Concept ^by ^/u/bigdred777 ^and ^/u/TheLobstrosity  
+ ^Bot ^& ^www.dogegiftbot.com ^programmed ^by ^/u/Doomhammer458
+ ^DogeGiftBot ^Hosting ^is ^provided ^by ^https://nanobit.pl/. ^Affordable ^VPS ^hosting.''' 
         self.reenter_link =  'http://www.reddit.com/message/compose?to=dogegiftbot&subject=reenter&message=%2Breenter%20'
         
         
