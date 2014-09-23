@@ -205,7 +205,7 @@ def check_commands():
 					msg.reply('You have been entered into the giveaway! '+m.footer)
 					print auth + ' has entered'
 				else:
-					msg.reply('Silly shibe! You can only enter once.'+m.footer)
+					msg.reply('There is no need to enter again. You are entered into the giveaway and will remain there until you win or opt-out.'+m.footer)
 					print auth + ' is a silly shibe'
 			else:
 				print auth + ' does not meet requirements'
