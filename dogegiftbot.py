@@ -52,16 +52,9 @@ done = get_posts()
 donors = []
 donations = []
 donor_dict = {}
-
-
-
 balance_message = False
 already_won = get_winners()
 
-
-print entries
-print already_won
-print done
 def getDonors(text):
         
 	text2 = text.replace('|',' ').encode("ascii","replace")
@@ -73,19 +66,10 @@ def getDonors(text):
 	        
 	        if "**/u/"+bot_name+"**" in line:
 	            
-	           
-	            
 	            if line.split()[0] == "tip":
-	                 
-	                  
-	                
 
-		    
 		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?" and counter <10:
-		              
-		         	    
 
-		         	        
 		        	if line.split()[2] not in dict.keys():
 		        		        
 		           	  dict[line.split()[2]] = float(line.split()[7])
