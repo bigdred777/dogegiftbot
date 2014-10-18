@@ -72,15 +72,18 @@ def getDonors(text):
 	for line in text3:
 	        
 	        if "**/u/"+bot_name+"**" in line:
+	            
 	           
 	            
 	            if line.split()[0] == "tip":
+	                 
 	                  
 	                
 
 		    
 		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?" and counter <10:
-		         	        
+		              
+		         	    
 
 		         	        
 		        	if line.split()[2] not in dict.keys():
@@ -412,17 +415,17 @@ def get_winner(msg, entries,winner=None, passer=None):
 				if winner == None:    
 				    winner = random.choice(entries)
 				redditor = r.get_redditor(winner)
-				redd_comments = redditor.get_comments(limit=1)
-				redd_posts = redditor.get_submitted(limit=1)
+				redd_comments = redditor.get_comments(limit=500,time="month")
+				redd_posts = redditor.get_submitted(limit=500,time="month")
 				print winner + ' picked'
 				for x in redd_comments:
-					if time.time() - x.created_utc < 1209600:
+					if time.time() - x.created_utc < 1209600 and str(x.subreddit).lower() == "dogecoin":
 						verified = True
 						print 'VERIFIED'
 						break
 					else: 
 						for y in redd_posts:
-							if time.time() - y.created_utc < 1209600:
+							if time.time() - y.created_utc < 1209600 and str(y.subreddit).lower() == "dogecoin":
 								verified = True
 								print 'VERIFIED'
 								break
@@ -431,13 +434,13 @@ def get_winner(msg, entries,winner=None, passer=None):
 								winner = None
 								print 'NOT VERIFIED'
 								continue
+					        if verified == True:
+					            break
 					        verified = False
 					        winner = None
-					        print 'NOT VERIFIED'
+					        #print 'NOT VERIFIED'
 					        continue
 
-								
-				time.sleep(5)
 			print winner + ' won!'
 			
 		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot giveaway!!'% (winner),text=m.win_post % (winner, m.entry_link,m.history_link))
