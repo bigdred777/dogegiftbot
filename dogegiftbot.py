@@ -52,16 +52,9 @@ done = get_posts()
 donors = []
 donations = []
 donor_dict = {}
-
-
-
 balance_message = False
 already_won = get_winners()
 
-
-print entries
-print already_won
-print done
 def getDonors(text):
         
 	text2 = text.replace('|',' ').encode("ascii","replace")
@@ -72,17 +65,11 @@ def getDonors(text):
 	for line in text3:
 	        
 	        if "**/u/"+bot_name+"**" in line:
-	           
 	            
 	            if line.split()[0] == "tip":
-	                  
-	                
 
-		    
 		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?" and counter <10:
-		         	        
 
-		         	        
 		        	if line.split()[2] not in dict.keys():
 		        		        
 		           	  dict[line.split()[2]] = float(line.split()[7])
@@ -102,7 +89,7 @@ def getDonors(text):
 	print dict                              
         return dict	
 def getaddress(winner,card):
-        
+        #return "DLUQmKYpefjkg17G8CFj8bBok4cwhJELxK" #debug  mode
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
 		'user_id':winner,
@@ -114,6 +101,20 @@ def getaddress(winner,card):
 	f = urllib2.urlopen(request)
 	address = f.read()[54:-17]
 	return address
+def getcost():
+        #return 100 #debug mode
+	status_code = 404
+	while status_code != 200:
+           	f = requests.get('https://x.g0cn.com/prices')
+           	status_code = f.status_code
+           	price_dict = f.json()
+           	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
+           	cost = xdg_price * 26
+           	cost_two = cost + 100
+        if cost_two < 10000:
+            return 1000000000.0
+        return cost_two
+           	
 def savelists(entries, already_won, done):
 	file = open('entries.txt','w')
 	list = []
@@ -142,19 +143,7 @@ def savelists(entries, already_won, done):
 	file.close()
 	file2.close()
 	file3.close()
-def getcost():
-	status_code = 404
-	while status_code != 200:
-           	f = requests.get('https://x.g0cn.com/prices')
-           	status_code = f.status_code
-           	price_dict = f.json()
-           	xdg_price = float(price_dict["prices"]["XDG"]["USD"])**-1
-           	cost = xdg_price * 26
-           	cost_two = cost + 100
-        if cost_two < 10000:
-            return 1000000000.0
-        return cost_two
-           	
+
 def check_commands():
 	print 'Checking messages'
 	msgs = r.get_unread(limit=None)
@@ -293,7 +282,7 @@ def check_commands():
 		    if float(balance) > float(getcost()):
           		    msg.mark_as_read()
           		    prize = body.split("+accept ")
-          		    prize = prize[1].split()[0]
+          		    prize = prize[1]
           		    add_winner(auth,prize=prize,claim=True)
           		    send_prize(auth,prize)
           		    
@@ -410,17 +399,17 @@ def get_winner(msg, entries,winner=None, passer=None):
 				if winner == None:    
 				    winner = random.choice(entries)
 				redditor = r.get_redditor(winner)
-				redd_comments = redditor.get_comments(limit=1)
-				redd_posts = redditor.get_submitted(limit=1)
+				redd_comments = redditor.get_comments(limit=500,time="month")
+				redd_posts = redditor.get_submitted(limit=500,time="month")
 				print winner + ' picked'
 				for x in redd_comments:
-					if time.time() - x.created_utc < 1209600:
+					if time.time() - x.created_utc < 1209600 and str(x.subreddit).lower() == "dogecoin":
 						verified = True
 						print 'VERIFIED'
 						break
 					else: 
 						for y in redd_posts:
-							if time.time() - y.created_utc < 1209600:
+							if time.time() - y.created_utc < 1209600 and str(y.subreddit).lower() == "dogecoin":
 								verified = True
 								print 'VERIFIED'
 								break
@@ -429,13 +418,13 @@ def get_winner(msg, entries,winner=None, passer=None):
 								winner = None
 								print 'NOT VERIFIED'
 								continue
+					        if verified == True:
+					            break
 					        verified = False
 					        winner = None
-					        print 'NOT VERIFIED'
+					        #print 'NOT VERIFIED'
 					        continue
 
-								
-				time.sleep(5)
 			print winner + ' won!'
 			
 		winning_postid = r.submit(subreddit_to_post,'[Winner] %s has won the DogeGiftBot giveaway!!'% (winner),text=m.win_post % (winner, m.entry_link,m.history_link))
@@ -563,7 +552,7 @@ while True:
 	datetime.datetime.now() - last_his_succ < datetime.timedelta(minutes = freq_bal_check):
 
 	    last_con_check = datetime.datetime.now()
-	    #try_contest()
+	    #try_contest() #uncomment for autmatic mode
 	    print "balance %s " %str(balance)
 	    print "gift cost %s " % str(getcost())
 	    
