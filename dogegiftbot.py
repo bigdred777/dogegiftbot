@@ -12,17 +12,19 @@ import hashlib
 from dogegiftbotmessages import dogegiftbotmessages
 import requests
 m = dogegiftbotmessages()
-r = praw.Reddit(user_agent='dogegiftbot version 1.2')
+r = praw.Reddit(user_agent='dogegiftbot version 1.3')
 
 ###### config section ############
-bot_name = "dogemultisigescrow"
+bot_name = "dogegiftbot"
+# dogetipbot.com API key.  must have < >
+apiKey = "<xxxxxx-xxxxxxx>"
 #authorized admins
 authorized = ['Doomhammer458']
 #login info
 r.login()                  #leave blank for praw config
 reentry_contact = "Doomhammer458"
 subreddit_to_post = "dogetrivia"
-freq_bal_check = 10 # time in minute
+freq_bal_check = 1 # time in minute
 contest_freq = 5
 
 ###### config section ############
@@ -54,40 +56,62 @@ donations = []
 donor_dict = {}
 balance_message = False
 already_won = get_winners()
+def update_history():
+    head = {"Authorization": "API-KEY "+apiKey}
+    
+    url = "https://dogetipbot.com/api/v1/"
+    
+    r = requests.get(url+"history.json",headers=head).json()
+    
+    trans = r["transactions"]
+    add_history_to_db(trans,bot_name)
+    donors = getDonors(trans)
+    return donors
 
-def getDonors(text):
-        
-	text2 = text.replace('|',' ').encode("ascii","replace")
-	dict = {}
-	text3 = StringIO.StringIO(text2)
+def get_balance():
+    
+    head = {"Authorization": "API-KEY "+apiKey}
+    
+    url = "https://dogetipbot.com/api/v1/"
+    
+
+    r = requests.get(url+"balance.json",headers=head).json()
+    balance = r["balance"]
+    balance = float(balance.replace(",",""))
+    return balance
+
+def getDonors(transactionsList):
+        donorDict={}
 	counter = 0
         anon_count = 0
-	for line in text3:
-	        
-	        if "**/u/"+bot_name+"**" in line:
-	            
-	            if line.split()[0] == "tip":
-
-		         if line.split()[3] == '**/u/'+bot_name+'**' and line.split()[1] == "?" and counter <10:
-
-		        	if line.split()[2] not in dict.keys():
+        format = "%Y-%m-%d %H:%M:%S"
+	for tx in transactionsList:
+	       
+                txTime = datetime.datetime.strptime(tx["timestamp"],format)
+                now = datetime.datetime.utcnow()
+	        if tx["state"] != "completed" or now-txTime > datetime.timedelta(days=14):
+                    continue
+	        amount = float(tx["amount"].replace(",",""))
+	        from_user = tx["from_user"].lower()
+	        txType = tx["type"]
+	        if tx["to_user"] == bot_name and txType== "tip":                      
+		    if from_user not in donorDict.keys():
 		        		        
-		           	  dict[line.split()[2]] = float(line.split()[7])
-		           	  counter += 1
-		        	elif line.split()[2] in dict.keys():
-                                    dict[line.split()[2]] = dict[line.split()[2]] + float(line.split()[7])
+                        donorDict[from_user] = amount
+                        counter += 1
+		    elif from_user in donorDict.keys():
+                                    donorDict[from_user] = donorDict[from_user] + amount
                                     
-                    elif line.split()[0] == "d":
-                        anon_count+=1
-                        dict["anonymous "+str(anon_count)] = float(line.split()[7])
-                        counter+=1
+                elif txType == "deposit":
+                    anon_count+=1
+                    donorDict["anonymous "+str(anon_count)] = amount
+                    counter+=1
                         
                 if counter == 10:
-                    break
-                    
-	print "donors "	   
-	print dict                              
-        return dict	
+                    break               
+        return donorDict
+
+
 def getaddress(winner,card):
         #return "DLUQmKYpefjkg17G8CFj8bBok4cwhJELxK" #debug  mode
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
@@ -167,12 +191,15 @@ def check_commands():
 		auth = msg.author.name
 		if auth== "dogetipbot":
 		    print "DOGETIPBOT message"
+		    
 		    if 'here are your last' in body:
+		        """
                         get_dtbinfo(body)
                         msg.mark_as_read()
                         global last_his_succ
                         last_his_succ = datetime.datetime.now()
                         update_balance_db(float(balance),float(getcost()))
+                        """
                         
 		    else:
 		        msg.mark_as_read()
@@ -542,8 +569,10 @@ while True:
 
 
 	if datetime.datetime.now() - last_bal_check > datetime.timedelta(minutes = freq_bal_check):
-	   print "Sending history request to dogetipbot"
-	   r.send_message('dogetipbot','hist','+history')
+	   balance = get_balance()
+           donor_dict = update_history()
+           update_balance_db(float(balance),float(getcost()))
+           last_his_succ = datetime.datetime.now()
 	   last_bal_check = datetime.datetime.now()
 	   if len(banned) > 0:
 	       check_posts()

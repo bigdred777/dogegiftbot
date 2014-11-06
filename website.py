@@ -59,11 +59,11 @@ class TipHistory(BaseDBObject):
         
     def getTotal(self):
         
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()  
         return self.total
     def getTips(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()
         return self.tips
     def returnTipWindow(self, numDays, start = datetime.date.today()):
@@ -83,7 +83,7 @@ class Winners(BaseDBObject):
         session.close()
         self.pending = get_winners()
     def getWinners(self):
-        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=5):
+        if datetime.datetime.now() - self.lastUpdate > datetime.timedelta(minutes=1):
             self.update()
         return self.winners
     def getPending(self):

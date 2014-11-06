@@ -266,44 +266,47 @@ if __name__ == "__main__":
     session.commit()
 
     
-def add_history_to_db(tip_bot_text,bot_name):
-    text = tip_bot_text.replace('|',' ').encode("ascii","replace")
-    text2 = text.split("\n")
-    text3 = []
+def add_history_to_db(transactionsList,bot_name):
+    bot_name= bot_name.lower()
     tips = {}
     d = {}
     w={}
-    for line in text2:
-        if bot_name in line:
-            text3.append(line.split())
-    for tx in text3:
-        if tx[1] == "failed":
+    for tx in transactionsList:
+        if tx["state"] != "completed":
             continue
-        if tx[0] == "tip":
-            name = tx[2]+ " " + tx[4]
+        amount = float(tx["amount"].replace(",",""))
+	from_user = tx["from_user"].lower()
+	txType = tx["type"]
+	txDate = tx["timestamp"][:10]
+	to_user = tx["to_user"]
+
+
+        if txType == "tip" and to_user == bot_name:
+            name = txDate+ " " + from_user
             if name in tips:
-                tips[name] += float(tx[7])
+                tips[name] += amount
             else:
-                tips[name] = float(tx[7])
-        elif tx[0] == "d":
-            name =  tx[4]
+                tips[name] = amount
+        elif txType == "deposit":
+            name =  txDate
             if name in d:
-                d[name] += float(tx[7])
+                d[name] += amount
             else:
-                d[name] = float(tx[7])
-        elif tx[0] == "w":
+                d[name] = amount
+        elif txType == "withdraw":
            
-            name =  tx[4] + " " +tx[6]
+            name =  txDate + " " +tx["to_address"]
             if name in w:
-                w[name] += float(tx[7])
+                w[name] += amount
             else:
-                w[name] = float(tx[7])
+                w[name] = amount
+
 
     session = create_session()
     
     for item in tips.keys():
-        donor = item.split()[0]
-        date = item.split()[1]
+        donor = item.split()[1]
+        date = item.split()[0]
         search = session.query(Transactions).filter(Transactions.donor == donor,Transactions.date == date).first()
         if search:
             if search.amount < tips[item]:  
@@ -338,8 +341,7 @@ def add_history_to_db(tip_bot_text,bot_name):
         else:
             session.add(Transactions(donor = donor,date = date, tx_id = str(uuid.uuid4()),tx_type = "withdraw",amount=w[item],address=address))
 
-
-        
+       
     
     session.commit()
     return
