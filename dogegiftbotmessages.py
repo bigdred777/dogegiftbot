@@ -30,6 +30,7 @@ Simply go to their website and pick what company you would like your gift card f
 you would like for your gift then the accept command would look like this "%s Amazon " 
 Once you send the accept command it can take a few minutes to get your card sent to your reddit inbox. If it does not come within
 an hour then contact /u/bigdred777 or /u/TheLobstrosity so that we can make sure you get your card.
+-If you would like The Doge instead, reply with +doge
 -If you would like to pass the gift to another random person, reply with "+pass random".  
 -If you would like to pass to another Redditor, then reply with "+pass [name of redditor] " to pass it to a specific redditor. Redditor must be in giveaway to win. 
 -You have 72 hours (3 days) to reply to this message. If you have not replied by then, a new winner will be picked.

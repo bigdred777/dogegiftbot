@@ -17,7 +17,6 @@ r = praw.Reddit(user_agent='dogegiftbot version 1.3')
 ###### config section ############
 bot_name = "dogegiftbot"
 # dogetipbot.com API key.  must have < >
-apiKey = "<xxxxxx-xxxxxxx>"
 #authorized admins
 authorized = ['Doomhammer458']
 #login info
@@ -113,7 +112,7 @@ def getDonors(transactionsList):
 
 
 def getaddress(winner,card):
-        #return "DLUQmKYpefjkg17G8CFj8bBok4cwhJELxK" #debug  mode
+        return "DLUQmKYpefjkg17G8CFj8bBok4cwhJELxK" #debug  mode
 	url = 'http://ws-egifter.egifter.com/API/v1/DogeAPI.aspx'
 	form = {
 		'user_id':winner,
@@ -126,7 +125,7 @@ def getaddress(winner,card):
 	address = f.read()[54:-17]
 	return address
 def getcost():
-        #return 100 #debug mode
+        return 100 #debug mode
 	status_code = 404
 	while status_code != 200:
            	f = requests.get('https://x.g0cn.com/prices')
@@ -310,8 +309,26 @@ def check_commands():
           		    msg.mark_as_read()
           		    prize = body.split("+accept ")
           		    prize = prize[1]
-          		    add_winner(auth,prize=prize,claim=True)
+          		    
           		    send_prize(auth,prize)
+          		    add_winner(auth,prize=prize,claim=True)
+          		    msg.reply("prize claimed!")
+          		    global last_con_check
+          		    last_con_check = datetime.datetime.now()+datetime.timedelta(hours=1)
+          		    balance = 0.0
+                    else:
+                        
+                        print "\n\nBALANCE TOO LOW TO FILL PRIZE OBLIGATIONS!!!!!!!\n\n"
+                    
+                    break
+                elif "+doge" in body  and auth in already_won:
+                    
+		    if float(balance) > float(getcost()):
+          		    msg.mark_as_read()
+          		    prize = "doge"
+          		    
+          		    send_prize(auth,prize)
+          		    add_winner(auth,prize=prize,claim=True)
           		    
           		    msg.reply("prize claimed!")
           		    global last_con_check
@@ -320,7 +337,8 @@ def check_commands():
                     else:
                         
                         print "\n\nBALANCE TOO LOW TO FILL PRIZE OBLIGATIONS!!!!!!!\n\n"
-		    
+                    break
+                            
 		elif '+pass' in body and auth in already_won:
 		    print "proccessing pass request"
 		    
@@ -399,7 +417,7 @@ def custom_contest(entries):
 			print winner + ' won!'
 			
 		
-		        new_contest(winner)
+		        
 		        add_winner(winner,prize=None,claim=True,archived=False)
 		        remove_entry(winner)
 		        return winner
@@ -430,13 +448,16 @@ def get_winner(msg, entries,winner=None, passer=None):
 				redd_posts = redditor.get_submitted(limit=500,time="month")
 				print winner + ' picked'
 				for x in redd_comments:
-					if time.time() - x.created_utc < 1209600 and str(x.subreddit).lower() == "dogecoin":
+				        print winner
+				        if verified == True:
+					    break
+					if time.time() - x.created_utc < 1209600 and str(x.subreddit).lower() == "dogetrivia":
 						verified = True
 						print 'VERIFIED'
 						break
 					else: 
 						for y in redd_posts:
-							if time.time() - y.created_utc < 1209600 and str(y.subreddit).lower() == "dogecoin":
+							if time.time() - y.created_utc < 1209600 and str(y.subreddit).lower() == "dogetrivia":
 								verified = True
 								print 'VERIFIED'
 								break
@@ -451,6 +472,7 @@ def get_winner(msg, entries,winner=None, passer=None):
 					        winner = None
 					        #print 'NOT VERIFIED'
 					        continue
+			 
 
 			print winner + ' won!'
 			
@@ -466,7 +488,7 @@ def get_winner(msg, entries,winner=None, passer=None):
 		r.send_message(winner, 'Congratulations!', m.winning_message % (m.accept_link,m.accept_link,m.pass_link,line_message))
 
 		choose_winner = 0
-		new_contest(winner)
+		add_winner(winner,post_id=winning_postid.id)
 		remove_entry(winner)
 		return winner
 		
@@ -474,8 +496,14 @@ def get_winner(msg, entries,winner=None, passer=None):
 def send_prize(Winner,prize):
     for x in authorized:
         r.send_message(x,'Gift Card','%s choose the %s gift card' % (Winner, prize))
+    
         
-
+    if prize == "doge":
+        post_id = get_contest_id(Winner)
+        submission = r.get_submission(submission_id = post_id)
+        submission.add_comment("+/u/dogetipbot @{} {} doge verify".format(Winner,getcost()))
+        
+        return
     address = getaddress(Winner,prize)
     cost = getcost()
     r.send_message('dogetipbot',prize + ' for ' + Winner, '+withdraw %s %s doge' % (address, str(cost)))

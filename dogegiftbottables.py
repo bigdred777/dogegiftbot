@@ -40,6 +40,7 @@ class Contests(Base):
     prize = Column(String)
     prize_claimed = Column(Boolean)
     archived = Column(Boolean)
+    post_id = Column(String)
     
     def __cmp__(self,other):
         if type(self) == None or type(other) == "NoneType":
@@ -195,16 +196,16 @@ def get_banned():
     for item in all_winners:
         winners.append(item.winner)
     return winners  
-def new_contest(Winner):
+def new_contest(Winner,post_id=None):
     session = create_session()
         
-    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = None,prize_claimed=False, archived = False)
+    db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = None,prize_claimed=False, archived = False,post_id=post_id)
     
     session.add(db_add)
     session.commit()
     print "added winner " + Winner
     
-def add_winner(Winner,prize=None,claim=False,archived=False):
+def add_winner(Winner,prize=None,claim=False,archived=False,post_id=None):
     session = create_session()
     search= session.query(Contests).filter(Contests.winner==Winner,Contests.archived==False).first()
     if search:
@@ -221,15 +222,19 @@ def add_winner(Winner,prize=None,claim=False,archived=False):
         print " modified winner " + Winner
     else:
     
-        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = prize,prize_claimed=claim, archived = archived)
+        db_add = Contests(winner = Winner,date = toTStamp(datetime.datetime.utcnow()),prize = prize,prize_claimed=claim, archived = archived,post_id=post_id)
     
         session.add(db_add)
         print "added winner " + Winner 
     session.commit()
     
     return 1
-
-     
+def get_contest_id(winner):
+    session = create_session()
+    contest_obj = session.query(Contests).filter(Contests.winner==winner,Contests.prize_claimed==False).first()
+    post_id = contest_obj.post_id
+    session.close()
+    return post_id
 
 def remove_winner(Winner):
     session = create_session()
